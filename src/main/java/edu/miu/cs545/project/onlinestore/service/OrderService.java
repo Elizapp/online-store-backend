@@ -9,23 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-
-    public Optional<Order> getOrderById(long orderId);
-
-
-    public String getOrderStatus(long orderId);
-
-    public Order createOrder(Order newOrder);
-
     List<Order> getOrderForBuyer(long buyerId);
-    List<Order> getAll();
-    public List<OrderLine> getOrderLineById(long orderId);
-
-    List<Order> getOrderBySellerId(long sellerId);
-
-    Boolean cancelOrder(long orderId);
+    public String getOrderStatus(long orderId);
     Boolean shippedOrder(long orderId);
+    List<Order> getAll();
     Boolean deliveredOrder(long orderId);
-
+    Boolean cancelOrder(long orderId);
+    List<Order> getOrderBySellerId(long sellerId);
     void createOrderFromCart(Long cartId, Shipping shipping, Payment payment);
 }

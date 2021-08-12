@@ -12,20 +12,19 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Autowired
     CategoryRepository categoryRepository;
-
     @Override
     public List<Category> getAll() {
         return categoryRepository.findAll();
     }
 
     @Override
-    public Category getCategoryById(Long id) {
-        return categoryRepository.findCategoryById(id);
+    public Category getCategoryByName(String name) {
+        return categoryRepository.findCategoryByName(name);
     }
 
     @Override
-    public Category getCategoryByName(String name) {
-        return categoryRepository.findCategoryByName(name);
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findCategoryById(id);
     }
 
     @Override

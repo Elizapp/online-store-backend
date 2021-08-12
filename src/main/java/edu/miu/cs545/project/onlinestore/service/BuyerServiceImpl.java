@@ -9,15 +9,17 @@ import java.util.List;
 
 @Service
 public class BuyerServiceImpl implements BuyerService{
+
     @Autowired
     BuyerRepository buyerRepository;
-    @Override
-    public List<Buyer> findAll() {
-        return buyerRepository.findAll();
-    }
 
     @Override
     public Buyer findBuyerById(Long id) {
         return buyerRepository.findBuyerById(id);
+    }
+
+    @Override
+    public List<Buyer> findAll() {
+        return buyerRepository.findAll();
     }
 }

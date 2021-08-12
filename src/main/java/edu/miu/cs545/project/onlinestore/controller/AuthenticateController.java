@@ -26,13 +26,25 @@ import java.util.Objects;
 public class AuthenticateController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private UserDetailsService jwtInMemoryUserDetailsService;
+
+
+
+    @GetMapping("/logout")
+    public Boolean Logout(HttpServletRequest request, HttpServletResponse response){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            return true;
+        }
+        return false;
+    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
@@ -46,16 +58,6 @@ public class AuthenticateController {
         final String token = jwtTokenUtil.generateToken(userDetails);
         System.out.println(token);
         return ResponseEntity.ok(new JwtResponse(token));
-    }
-
-    @GetMapping("/logout")
-    public Boolean Logout(HttpServletRequest request, HttpServletResponse response){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-            return true;
-        }
-        return false;
     }
 
     private void authenticate(String username, String password) throws Exception {

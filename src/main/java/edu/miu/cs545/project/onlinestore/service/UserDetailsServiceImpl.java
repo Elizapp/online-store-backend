@@ -18,18 +18,20 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-   // @Autowired
-   // private UserRepository userRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+
     @Autowired
     SellerRepository sellerRepository;
+
     @Autowired
-    BuyerRepository buyerRepository;
+    private RoleRepository roleRepository;
+
     @Autowired
     AdminRepository adminRepository;
+
+    @Autowired
+    BuyerRepository buyerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username)
@@ -51,7 +53,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 final String encryptedPassword = bCryptPasswordEncoder.encode(updateUser.getPassword());
                 user.setPassword(encryptedPassword);
             }
-
             user.setFirstName(updateUser.getFirstName());
             user.setLastName(updateUser.getLastName());
             user.setPhoneNumber(updateUser.getPhoneNumber());
@@ -106,10 +107,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 }
             }
 
-
-            //final ConfirmationToken confirmationToken = new ConfirmationToken(user);
-
-            //confirmationTokenService.saveConfirmationToken(confirmationToken);
             return "Register successfully.";
         }catch (Exception ex){
             return ex.getMessage();

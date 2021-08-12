@@ -39,6 +39,10 @@ public class OrderController {
     @Autowired
     ModelMapper modelMapper;
 
+    public String getOrderStatus(long orderId){
+        return orderService.getOrderStatus(orderId);
+    }
+
     @GetMapping("/{orderId}")
     public @ResponseBody
     OrderDTO getOrderById(@PathVariable long orderId){ //checked
@@ -54,26 +58,26 @@ public class OrderController {
         return orderService.cancelOrder(orderId);
     }
 
-    public String getOrderStatus(long orderId){
-        return orderService.getOrderStatus(orderId);
+    @GetMapping
+    public List<OrderDTO> getOrderForBuyer(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(x->x.getUser().getUsername().equalsIgnoreCase(userDetails.getUsername())).findFirst();
+        if(buyer.isPresent()){
+            List<Order> orders = orderService.getOrderForBuyer(buyer.get().getId());
+            return orders.stream()
+                    .map(orderData -> modelMapper.map(orderData, OrderDTO.class))
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    public void createOrderFromCart(Long cartId, Shipping shipping, Payment payment){
+        orderService.createOrderFromCart(cartId,shipping,payment);
     }
 
     public List<OrderLine> getOrderLineById(long orderId){
         return orderService.getOrderLineById(orderId);
-    }
-
-    @GetMapping
-    public List<OrderDTO> getOrderForBuyer(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(x->x.getUser().getUsername().equalsIgnoreCase(userdetails.getUsername())).findFirst();
-        if(buyer.isPresent()){
-            List<Order> orders = orderService.getOrderForBuyer(buyer.get().getId());
-            return orders.stream()
-                    .map(p -> modelMapper.map(p, OrderDTO.class))
-                    .collect(Collectors.toList());
-        }
-        return null;
     }
 
     @GetMapping("/export/pdf")
@@ -98,16 +102,10 @@ public class OrderController {
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(new InputStreamResource(bis));
-
-
         }
         return null;
-
     }
 
-    public void createOrderFromCart(Long cartId, Shipping shipping, Payment payment){
-        orderService.createOrderFromCart(cartId,shipping,payment);
-    }
 
 }
 

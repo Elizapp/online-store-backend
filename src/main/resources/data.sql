@@ -23,3 +23,5 @@ SELECT (SELECT ID FROM USERS WHERE USERNAME='BUYER' LIMIT 1) , (SELECT ID FROM R
 INSERT INTO Categories(category_id, category_name) VALUES('Grosery');
 INSERT INTO Categories(category_id, category_name) VALUES('Shoes');
 INSERT INTO Categories(category_id, category_name) VALUES('Clothing');
+
+INSERT INTO Categories( category_name) VALUES('Food');

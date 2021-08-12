@@ -17,7 +17,6 @@ public class Admin implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   // @NotNull
     private long id;
 
     private String level;

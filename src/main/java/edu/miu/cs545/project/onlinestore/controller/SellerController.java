@@ -23,10 +23,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/sellers")
 public class SellerController {
-    @Autowired
-    private ProductService productService;
+
     @Autowired
     SellerService sellerService;
+
+    @Autowired
+    private ProductService productService;
+
     @Autowired
     OrderService orderService;
 
@@ -37,28 +40,24 @@ public class SellerController {
     public List<SellerDTO> getAll(){
 
         List<Seller> sellers = sellerService.getAll();
-        return sellers.stream().map(s->modelMapper.map(s, SellerDTO.class)).collect(Collectors.toList());
+        return sellers.stream().map(sel->modelMapper.map(sel, SellerDTO.class)).collect(Collectors.toList());
+    }
+
+    // to generated products by seller
+    @GetMapping("/{id}/products")
+    public List<ProductDTO> getProductsBySellerId(@PathVariable("id") Long id){
+        List<Product> products = sellerService.getProductsBySellerId(id);
+        return products.stream()
+                .map(prod -> modelMapper.map(prod, ProductDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/notapproved")
     public List<SellerDTO> getNotApprovedSellers(){
         List<Seller> sellers = sellerService.getAll();
-        return sellers.stream().filter(s->!s.isApproved()).map(s->modelMapper.map(s, SellerDTO.class)).collect(Collectors.toList());
+        return sellers.stream().filter(sel->!sel.isApproved()).map(seller->modelMapper.map(seller, SellerDTO.class)).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public SellerDTO getSellerById(@PathVariable("id") Long id){
-        Seller seller = sellerService.getSellerByID(id);
-        return modelMapper.map(seller, SellerDTO.class);
-    }
-    //Get products by seller
-    @GetMapping("/{id}/products")
-    public List<ProductDTO> getProductsBySellerId(@PathVariable("id") Long id){
-        List<Product> products = sellerService.getProductsBySellerId(id);
-        return products.stream()
-                .map(p -> modelMapper.map(p, ProductDTO.class))
-                .collect(Collectors.toList());
-    }
     @GetMapping("/{id}/orders")
     public List<OrderDTO> getOrdersBySellerId(@PathVariable("id") Long id){
         List<Order> orders = orderService.getOrderBySellerId(id);
@@ -67,14 +66,34 @@ public class SellerController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{orderId}/cancel")
-    public @ResponseBody Boolean cancelOrder(@PathVariable long orderId){
-        return orderService.cancelOrder(orderId);
+
+    @GetMapping("/{id}")
+    public SellerDTO getSellerById(@PathVariable("id") Long id){
+        Seller seller = sellerService.getSellerByID(id);
+        return modelMapper.map(seller, SellerDTO.class);
     }
+
     @GetMapping("/{orderId}/shipped")
     public @ResponseBody Boolean shippedOrder(@PathVariable long orderId){
+
         return orderService.shippedOrder(orderId);
     }
+
+    @GetMapping("/{orderId}/cancel")
+    public @ResponseBody Boolean cancelOrder(@PathVariable long orderId){
+
+        return orderService.cancelOrder(orderId);
+    }
+
+
+    @PostMapping("/updateproduct")
+    public Boolean updateProduct(@RequestBody ProductDTO productDTO){
+        Product product = modelMapper.map(productDTO, Product.class);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
+        return productService.updateProduct(product, userdetails.getUser().getId());
+    }
+
     @GetMapping("/{orderId}/delivered")
     public @ResponseBody Boolean deliveredOrder(@PathVariable long orderId){
         return orderService.deliveredOrder(orderId);
@@ -83,17 +102,10 @@ public class SellerController {
     @PostMapping("/newproduct")
     public Boolean createProduct(@RequestBody ProductDTO productDTO){
         Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        return productService.createProduct(product, userdetails.getUser().getId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return productService.createProduct(product, userDetails.getUser().getId());
     }
 
-    @PostMapping("/updateproduct")
-    public Boolean updateProduct(@RequestBody ProductDTO productDTO){
-        Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        return productService.updateProduct(product, userdetails.getUser().getId());
-    }
 }
 

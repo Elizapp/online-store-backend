@@ -15,12 +15,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/buyers")
 public class BuyerController {
+    @Autowired
+    ModelMapper modelMapper;
 
     @Autowired
     private ShoppingCartService shoppingCartService;
-
-    @Autowired
-    ModelMapper modelMapper;
 
     @GetMapping("{buyerId}/cartnotcompleted")
     public ShoppingCartDTO getShoppingCartByBuyerNotCompleted(@PathVariable Long buyerId){

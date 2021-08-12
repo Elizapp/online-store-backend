@@ -18,28 +18,26 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/shoppingcarts")
 public class ShoppingCartController {
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+
 
     @Autowired
     ModelMapper modelMapper;
 
     @Autowired
-    OrderController orderController;
+    private ShoppingCartService shoppingCartService;
 
-    @PostMapping()
-    public ShoppingCart createShoppingCart(@RequestBody ShoppingCart cart){
-        return shoppingCartService.createShoppingCart(cart);
-    }
+    @Autowired
+    OrderController orderController;
 
     @GetMapping("/{cartId}")
     public ShoppingCartDTO getShoppingCart(@PathVariable Long cartId){
-        Optional<ShoppingCart> cart = shoppingCartService.getShoppingCart(cartId);
-        if(cart.isPresent()){
-            return modelMapper.map(cart.get(), ShoppingCartDTO.class);
+        Optional<ShoppingCart> shoppingCartcart = shoppingCartService.getShoppingCart(cartId);
+        if(shoppingCartcart.isPresent()){
+            return modelMapper.map(shoppingCartcart.get(), ShoppingCartDTO.class);
         }
         return null;
     }
+
 
     @GetMapping("/{cartId}/cartlines")
     public List<ShoppingCartLineDTO> getLinesFromShoppingCart(@PathVariable Long cartId){
@@ -49,24 +47,31 @@ public class ShoppingCartController {
                 .collect(Collectors.toList());
     }
 
-    // add line to shopping cart
-    @PostMapping("/{cartId}/cartlines")
-    public void addLineToShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
-        shoppingCartService.addLineToShoppingCart(cartId, cartLine);
+    @PostMapping()
+    public ShoppingCart createShoppingCart(@RequestBody ShoppingCart cart){
+        return shoppingCartService.createShoppingCart(cart);
     }
-    // update line in shopping cart
+
+    // updating  shping cart line in shopping cart
     @PutMapping("/{cartId}/cartlines")
     public void updateLineInShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
         shoppingCartService.updateLineInShoppingCart(cartId, cartLine);
     }
 
-    // update quantity in shopping cart
+    // adding shopping cart  line to shopping cart
+    @PostMapping("/{cartId}/cartlines")
+    public void addLineToShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
+        shoppingCartService.addLineToShoppingCart(cartId, cartLine);
+    }
+
+
+    // updating the quantity in shopping cart
     @PutMapping("/{cartId}/cartlines/{lineId}")
     public void updateLineInShoppingCart(@PathVariable Long cartId, @PathVariable Long lineId, @RequestBody Integer newQuantity){
         shoppingCartService.updateQuantityInShoppingCartLine(cartId, lineId, newQuantity);
     }
 
-    // remove line from shopping cart
+    // removing line from shopping cart
     @DeleteMapping("/{cartId}/cartlines/{cartLineId}")
     public void removeLineToShoppingCart(@PathVariable Long cartId, @PathVariable Long cartLineId){
         shoppingCartService.removeLineFromShoppingCart(cartId, cartLineId);
@@ -77,4 +82,3 @@ public class ShoppingCartController {
         orderController.createOrderFromCart(cartId, shippingAndPayment.shipping, shippingAndPayment.payment);
     }
 }
-
