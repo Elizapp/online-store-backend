@@ -1,5 +1,15 @@
 package edu.miu.cs545.project.onlinestore.service;
 
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
+import edu.miu.cs545.project.onlinestore.repository.ShoppingCartLineRepository;
+import edu.miu.cs545.project.onlinestore.repository.ShoppingCartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService{
     @Autowired
