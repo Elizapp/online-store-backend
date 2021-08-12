@@ -21,13 +21,14 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private JavaMailSender javaMailSender;
-
-    @Autowired
     private OrderLineRepository orderLineRepository;
 
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    BuyerRepository buyerRepository;
 
     @Autowired
     private ShippingService shippingService;
@@ -36,19 +37,13 @@ public class OrderServiceImpl implements OrderService {
     private PaymentService paymentService;
 
     @Autowired
-    BuyerRepository buyerRepository;
-
-    @Autowired
     private ShoppingCartService shoppingCartService;
 
     @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
     private ShoppingCartRepository shoppingCartRepository;
-
-
-    @Override
-    public Optional<Order> getOrderById(long orderId){
-        return orderRepository.findById(orderId);   //checked
-    }
 
     @Override
     public String getOrderStatus(long orderId){//checked
@@ -56,19 +51,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(Order newOrder){
-        return orderRepository.save(newOrder);
-    } //checked
+    public Optional<Order> getOrderById(long orderId){
+        return orderRepository.findById(orderId);   //checked
+    }
 
     @Override
     public List<Order> getOrderForBuyer(long buyerId) {
         return orderRepository.findAllByBuyerId(buyerId);
     }
 
+
     @Override
-    public List<Order> getAll() {
-        return orderRepository.findAll();
-    }
+    public Order createOrder(Order newOrder){
+        return orderRepository.save(newOrder);
+    } //checked
 
     @Override
     public List<OrderLine> getOrderLineById(long orderId){
@@ -77,13 +73,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrderBySellerId(long sellerId) {
-
-        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(ol->ol.getProduct().getSeller().getId() == sellerId).collect(Collectors.toList());
-
-        List<Long> ids = lines.stream().map( l->l.getId()).collect(Collectors.toList());
-        List<Order> orders = orderRepository.findAll().stream().filter(o->ids.contains(o.getId())).collect(Collectors.toList());
-        return orders;
+    public List<Order> getAll() {
+        return orderRepository.findAll();
     }
 
     @Override
@@ -96,6 +87,38 @@ public class OrderServiceImpl implements OrderService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<Order> getOrderBySellerId(long sellerId) {
+
+        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(orderLine -> orderLine.getProduct().getSeller().getId() == sellerId).collect(Collectors.toList());
+
+        List<Long> ids = lines.stream().map( orderLine->orderLine.getId()).collect(Collectors.toList());
+        List<Order> orders = orderRepository.findAll().stream().filter(ord->ids.contains(ord.getId())).collect(Collectors.toList());
+        return orders;
+    }
+
+
+    void sendEmail(String emailAddress, Order order) {
+        try {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(emailAddress, emailAddress);
+
+            msg.setSubject("Purchase was successful");
+            String content = "";
+            content += order.getId() + "\n";
+            content += order.getOrderDate().toString() + "\n";
+            content += order.getPayment().getPaymentMethod() + "\n";
+            content += order.getTotalMoney().toString() + "\n";
+            content += order.getShipping().toString() + "\n";
+            content += "THANK YOU FOR SHOPPING WITH US.";
+            msg.setText(content);
+
+            javaMailSender.send(msg);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -122,38 +145,17 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
-    void sendEmail(String emailAddress, Order order) {
-        try {
-            SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setTo(emailAddress, emailAddress);
-
-            msg.setSubject("Purchase successfully");
-            String content = "";
-            content += order.getId() + "\n";
-            content += order.getOrderDate().toString() + "\n";
-            content += order.getPayment().getPaymentMethod() + "\n";
-            content += order.getTotalMoney().toString() + "\n";
-            content += order.getShipping().toString() + "\n";
-            content += "THANK YOU FOR SHOPPING.";
-            msg.setText(content);
-
-            javaMailSender.send(msg);
-        }catch (Exception ex){
-            System.out.println(ex.getMessage());
-        }
-    }
-
     public void createOrderFromCart(Long cartId, Shipping shipping, Payment payment){
         Order order = new Order();
-        Shipping shipping1 = shippingService.createShipping(shipping);
-        Payment payment1 = paymentService.createPayment(payment);
+        Payment paymentData = paymentService.createPayment(payment);
+        Shipping shippingNew = shippingService.createShipping(shipping);
         Optional<ShoppingCart> cart = shoppingCartService.getShoppingCart(cartId);
         if(cart.isPresent()){
             ShoppingCart cart1 = cart.get();
             order.setCurrentStatus("NEW");
             order.setOrderDate(LocalDate.now());
-            order.setShipping(shipping1);
-            order.setPayment(payment1);
+            order.setShipping(shippingNew);
+            order.setPayment(paymentData);
             order.setTotalMoney(cart1.getTotalMoney());
             order.setBuyer(cart1.getBuyer());
             List<ShoppingCartLine> cartLines = shoppingCartService.getLinesByShoppingCart(cartId);
@@ -163,15 +165,15 @@ public class OrderServiceImpl implements OrderService {
                 orderLineRepository.save(orderLine);
             });
 
-            Order order1 = orderRepository.save(order);
+            Order orderNew = orderRepository.save(order);
 
             cart1.setCompleted(true);
             Buyer buyer = cart1.getBuyer();
             buyer.setAccumulatedPoints(buyer.getAccumulatedPoints() + 10);
-            buyerRepository.save(buyer);//gain point for buyer.
+            buyerRepository.save(buyer);//adding point for buyer.
 
             shoppingCartRepository.save(cart1);
-            sendEmail(buyer.getUser().getEmail(),order1);
+            sendEmail(buyer.getUser().getEmail(),orderNew);
         }
     }
 

@@ -31,14 +31,6 @@ public class ProductController {
     @Autowired
     ModelMapper modelMapper;
 
-    @GetMapping("")
-    public @ResponseBody
-    List<ProductDTO> getAllProducts(){
-        List<Product> products = productService.getAll();
-        return products.stream()
-                .map(p -> modelMapper.map(p,ProductDTO.class))
-                .collect(Collectors.toList());
-    }
 
     @GetMapping("/{productId}")
     public @ResponseBody ProductDTO getProductById(@PathVariable Long productId){
@@ -49,14 +41,23 @@ public class ProductController {
         return null;
     }
 
+    @GetMapping("")
+    public @ResponseBody
+    List<ProductDTO> getAllProducts(){
+        List<Product> products = productService.getAll();
+        return products.stream()
+                .map(p -> modelMapper.map(p,ProductDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
     @PostMapping("/new")
     @PreAuthorize("hasAutority('SELLER')")
     public Boolean createProduct(@RequestBody ProductDTO productDTO){
         System.out.println(productDTO);
         Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
         System.out.println(userdetails);
         return productService.createProduct(product, userdetails.getUser().getId());
     }
@@ -64,8 +65,8 @@ public class ProductController {
     @PutMapping("")
     public void updateProduct(@RequestBody ProductDTO productDTO){
         Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
         productService.updateProduct(product, userdetails.getUser().getId());
     }
 
@@ -78,7 +79,7 @@ public class ProductController {
                 productService.deleteProduct(productId);
                 return true;
             } else{
-                throw new EntityNotFoundException("Product does not exist!");
+                throw new EntityNotFoundException("Product doesn't exist");
             }
         }catch(Exception e){
             throw new Exception(e.getMessage());
@@ -90,7 +91,7 @@ public class ProductController {
     List<ReviewDTO> getApprovedReviewsByProductId(@PathVariable Long productId){
         List<Review> reviews = productService.getApprovedReviewsByProductId(productId);
         return reviews.stream()
-                .map(r->modelMapper.map(r,ReviewDTO.class))
+                .map(review->modelMapper.map(review,ReviewDTO.class))
                 .collect(Collectors.toList());
     }
 

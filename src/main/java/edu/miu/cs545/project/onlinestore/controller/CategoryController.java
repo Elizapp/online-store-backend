@@ -14,33 +14,37 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
-    @Autowired
-    CategoryService categoryService;
+
     @Autowired
     ModelMapper modelMapper;
+
+
+    @Autowired
+    CategoryService categoryService;
 
     @GetMapping
     public List<CategoryDTO> getAll(){
         List<Category> categories = categoryService.getAll();
-        return categories.stream().map(c->modelMapper.map(c, CategoryDTO.class)).collect(Collectors.toList());
+        return categories.stream().map(cat->modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
+    }
+
+
+    @PostMapping()
+    public void createCategory(@RequestBody Category category){
+        categoryService.createCategory(category);
+    }
+
+    @GetMapping("/category")
+    public CategoryDTO getCategoryByName(@RequestParam("name") String name){
+        Category category = categoryService.getCategoryByName(name);
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     @GetMapping("/{id}")
     public CategoryDTO getCategoryById(@PathVariable("id") Long id){
 
-        Category cat = categoryService.getCategoryById(id);
-        return modelMapper.map(cat, CategoryDTO.class);
-    }
-
-    @GetMapping("/category")
-    public CategoryDTO getCategoryByName(@RequestParam("name") String name){
-        Category cat = categoryService.getCategoryByName(name);
-        return modelMapper.map(cat, CategoryDTO.class);
-    }
-
-    @PostMapping()
-    public void createCategory(@RequestBody Category category){
-        categoryService.createCategory(category);
+        Category category = categoryService.getCategoryById(id);
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
 }

@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface ProductService {
     List<Product> getAll();
-    Optional<Product> getProductById(Long productId);
-    Boolean createProduct(Product product, Long userId);
-    void deleteProduct(Long productId);
-    List<Review> getApprovedReviewsByProductId(Long productId);
-    Boolean updateProduct(Product product, Long userId);
+    Boolean createProduct(Product product, Long id);
+    void deleteProduct(Long id);
+    Optional<Product> getProductById(Long id);
+    List<Review> getApprovedReviewsByProductId(Long id);
+    Boolean updateProduct(Product product, Long id);
 }

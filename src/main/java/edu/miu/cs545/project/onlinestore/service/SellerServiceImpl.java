@@ -17,15 +17,13 @@ public class SellerServiceImpl implements SellerService{
     public List<Seller> getAll() {
         return sellerRepository.findAll();
     }
-
-    @Override
-    public Seller getSellerByID(Long id) {
-        return sellerRepository.getSellerById(id);
-    }
-
     @Override
     public List<Product> getProductsBySellerId(Long id) {
         return sellerRepository.getProductsBySellerId(id);
+    }
+    @Override
+    public Seller getSellerByID(Long id) {
+        return sellerRepository.getSellerById(id);
     }
 
 
