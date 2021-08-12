@@ -20,8 +20,8 @@ INSERT INTO USERS_ROLES(user_id,role_id)
 SELECT (SELECT ID FROM USERS WHERE USERNAME='BUYER' LIMIT 1) , (SELECT ID FROM ROLES WHERE NAME='BUYER' LIMIT 1);
 
 --For categories
-INSERT INTO Categories(category_id, category_name) VALUES('Grosery');
-INSERT INTO Categories(category_id, category_name) VALUES('Shoes');
-INSERT INTO Categories(category_id, category_name) VALUES('Clothing');
-
-INSERT INTO Categories( category_name) VALUES('Food');
+INSERT INTO categories (category_name) VALUES ('Fashion');
+INSERT INTO categories (category_name) VALUES ('Toys');
+INSERT INTO categories (category_name) VALUES ('Electronics');
+INSERT INTO categories (category_name) VALUES ('Food');
+INSERT INTO categories (category_name) VALUES ('Furniture');
