@@ -1,18 +1,20 @@
 package edu.miu.cs545.project.onlinestore.service;
 
-import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
-import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
-
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
+
+
 
 public interface ShoppingCartService {
-    ShoppingCart createShoppingCart(ShoppingCart cart);
-    void removeLineFromShoppingCart(Long cartId, Long cartLineId);
     void addLineToShoppingCart(Long cartId, ShoppingCartLine cartLine);
-    List<ShoppingCartLine> getLinesByShoppingCart(Long cartId);
+    void removeLineFromShoppingCart(Long cartId, Long id);
+    List<ShoppingCartLine> getLinesByShoppingCart(Long id);
+    ShoppingCart createShoppingCart(ShoppingCart cart);
     void updateLineInShoppingCart(Long cartId, ShoppingCartLine newCartLine);
-    Optional<ShoppingCart> getShoppingCart(Long cartId);
     void updateQuantityInShoppingCartLine(Long cartId,Long lineId,Integer newQuantity);
-    Optional<ShoppingCart> getShoppingCartByBuyerNotCompleted(Long buyerId);
+    Optional<ShoppingCart> getShoppingCart(Long id);
+    Optional<ShoppingCart> getShoppingCartByBuyerNotCompleted(Long id);
 }
