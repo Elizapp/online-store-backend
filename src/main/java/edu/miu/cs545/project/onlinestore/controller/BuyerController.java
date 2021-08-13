@@ -22,8 +22,8 @@ public class BuyerController {
     private ShoppingCartService shoppingCartService;
 
     @GetMapping("{buyerId}/cartnotcompleted")
-    public ShoppingCartDTO getShoppingCartByBuyerNotCompleted(@PathVariable Long buyerId){
-        Optional<ShoppingCart> cart = shoppingCartService.getShoppingCartByBuyerNotCompleted(buyerId);
+    public ShoppingCartDTO getShoppingCartByBuyerNotCompleted(@PathVariable Long id){
+        Optional<ShoppingCart> cart = shoppingCartService.getShoppingCartByBuyerNotCompleted(id);
         if(cart.isPresent()){
             return modelMapper.map(cart.get(), ShoppingCartDTO.class);
         }

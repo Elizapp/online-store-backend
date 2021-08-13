@@ -1,10 +1,10 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
 import edu.miu.cs545.project.onlinestore.domain.Category;
-import edu.miu.cs545.project.onlinestore.dto.CategoryDTO;
 import edu.miu.cs545.project.onlinestore.service.CategoryService;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.dto.CategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +17,6 @@ public class CategoryController {
 
     @Autowired
     ModelMapper modelMapper;
-
-
     @Autowired
     CategoryService categoryService;
 
@@ -27,7 +25,6 @@ public class CategoryController {
         List<Category> categories = categoryService.getAll();
         return categories.stream().map(cat->modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
     }
-
 
     @PostMapping()
     public void createCategory(@RequestBody Category category){
@@ -46,5 +43,4 @@ public class CategoryController {
         Category category = categoryService.getCategoryById(id);
         return modelMapper.map(category, CategoryDTO.class);
     }
-
 }

@@ -25,12 +25,8 @@ import java.util.stream.Collectors;
 public class ProductController {
     @Autowired
     private ProductService productService;
-
-
-
     @Autowired
     ModelMapper modelMapper;
-
 
     @GetMapping("/{productId}")
     public @ResponseBody ProductDTO getProductById(@PathVariable Long productId){
@@ -41,25 +37,22 @@ public class ProductController {
         return null;
     }
 
-    @GetMapping("")
-    public @ResponseBody
-    List<ProductDTO> getAllProducts(){
-        List<Product> products = productService.getAll();
-        return products.stream()
-                .map(p -> modelMapper.map(p,ProductDTO.class))
-                .collect(Collectors.toList());
-    }
-
-
     @PostMapping("/new")
     @PreAuthorize("hasAutority('SELLER')")
     public Boolean createProduct(@RequestBody ProductDTO productDTO){
-        System.out.println(productDTO);
         Product product = modelMapper.map(productDTO, Product.class);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
         System.out.println(userdetails);
         return productService.createProduct(product, userdetails.getUser().getId());
+    }
+    @GetMapping("")
+    public @ResponseBody
+    List<ProductDTO> getAllProducts(){
+        List<Product> products = productService.getAll();
+        return products.stream()
+                .map(prod -> modelMapper.map(prod,ProductDTO.class))
+                .collect(Collectors.toList());
     }
 
     @PutMapping("")
@@ -69,7 +62,6 @@ public class ProductController {
         UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
         productService.updateProduct(product, userdetails.getUser().getId());
     }
-
 
     @DeleteMapping(value = "/{productId}")
     public Boolean deleteProduct(@PathVariable Long productId) throws Exception {
@@ -85,7 +77,7 @@ public class ProductController {
             throw new Exception(e.getMessage());
         }
     }
-    //Get approved reviews by product id
+
     @GetMapping("{productId}/reviews")
     public @ResponseBody
     List<ReviewDTO> getApprovedReviewsByProductId(@PathVariable Long productId){
@@ -94,5 +86,4 @@ public class ProductController {
                 .map(review->modelMapper.map(review,ReviewDTO.class))
                 .collect(Collectors.toList());
     }
-
 }

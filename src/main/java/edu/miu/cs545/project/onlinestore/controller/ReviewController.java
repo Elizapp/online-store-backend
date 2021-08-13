@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 public class ReviewController {
     @Autowired
     private ReviewService reviewService;
-
     @Autowired
     ModelMapper modelMapper;
 
@@ -39,16 +38,13 @@ public class ReviewController {
     public @ResponseBody List<ReviewDTO> getReviewsNotApproved(){
         List<Review> reviews = reviewService.getReviewsNotApproved();
         return reviews.stream()
-                .map(p -> modelMapper.map(p,ReviewDTO.class))
+                .map(proRev -> modelMapper.map(proRev,ReviewDTO.class))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{reviewId}/approve")
     public Boolean approveReview(@PathVariable Long reviewId){
-
         return reviewService.approveReview(reviewId);
-
     }
-
 
 }

@@ -1,18 +1,18 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
 import edu.miu.cs545.project.onlinestore.domain.Buyer;
-import edu.miu.cs545.project.onlinestore.domain.Seller;
 import edu.miu.cs545.project.onlinestore.domain.User;
 import edu.miu.cs545.project.onlinestore.dto.*;
-import edu.miu.cs545.project.onlinestore.service.BuyerService;
 import edu.miu.cs545.project.onlinestore.service.SellerServiceImpl;
+import edu.miu.cs545.project.onlinestore.service.BuyerService;
+import edu.miu.cs545.project.onlinestore.domain.Seller;
 import edu.miu.cs545.project.onlinestore.service.UserDetailsImpl;
 import edu.miu.cs545.project.onlinestore.service.UserDetailsServiceImpl;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +22,13 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
+    ModelMapper modelMapper;
+    @Autowired
     UserDetailsServiceImpl userDetailsService;
-
     @Autowired
     SellerServiceImpl sellerService;
-
     @Autowired
     BuyerService buyerService;
-
-    @Autowired
-    ModelMapper modelMapper;
 
     @GetMapping({ "/mysellerinfo" })
     public @ResponseBody
@@ -73,6 +70,5 @@ public class UserController {
             return modelMapper.map(buyer.get(), BuyerDTO.class);
         return null;
     }
-
 }
 

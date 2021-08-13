@@ -29,24 +29,21 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/orders")
 public class OrderController {
-
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    ModelMapper modelMapper;
     @Autowired
     BuyerService buyerService;
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    public String getOrderStatus(long orderId){
-        return orderService.getOrderStatus(orderId);
+    public String getOrderStatus(long id){
+        return orderService.getOrderStatus(id);
     }
 
     @GetMapping("/{orderId}")
     public @ResponseBody
-    OrderDTO getOrderById(@PathVariable long orderId){ //checked
-        Optional<Order> orderOptional = orderService.getOrderById(orderId);
+    OrderDTO getOrderById(@PathVariable long id){
+        Optional<Order> orderOptional = orderService.getOrderById(id);
         if(orderOptional.isPresent()){
             return modelMapper.map(orderOptional.get(), OrderDTO.class);
         }
@@ -60,9 +57,9 @@ public class OrderController {
 
     @GetMapping
     public List<OrderDTO> getOrderForBuyer(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(x->x.getUser().getUsername().equalsIgnoreCase(userDetails.getUsername())).findFirst();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(buy->buy.getUser().getUsername().equalsIgnoreCase(userDetails.getUsername())).findFirst();
         if(buyer.isPresent()){
             List<Order> orders = orderService.getOrderForBuyer(buyer.get().getId());
             return orders.stream()
@@ -76,8 +73,8 @@ public class OrderController {
         orderService.createOrderFromCart(cartId,shipping,payment);
     }
 
-    public List<OrderLine> getOrderLineById(long orderId){
-        return orderService.getOrderLineById(orderId);
+    public List<OrderLine> getOrderLineById(long id){
+        return orderService.getOrderLineById(id);
     }
 
     @GetMapping("/export/pdf")
@@ -85,23 +82,23 @@ public class OrderController {
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(x->x.getUser().getUsername().equalsIgnoreCase(userdetails.getUsername())).findFirst();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
+        Optional<Buyer> buyer =  buyerService.findAll().stream().filter(buy->buy.getUser().getUsername().equalsIgnoreCase(userdetails.getUsername())).findFirst();
         if(buyer.isPresent()){
             List<Order> orders = orderService.getOrderForBuyer(buyer.get().getId());
             List<OrderDTO> orderDTOS = orders.stream()
-                    .map(p -> modelMapper.map(p, OrderDTO.class))
+                    .map(x -> modelMapper.map(x, OrderDTO.class))
                     .collect(Collectors.toList());
             OrderPDFExporter exporter = new OrderPDFExporter(orderDTOS);
-            ByteArrayInputStream bis = exporter.export();
+            ByteArrayInputStream ba = exporter.export();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "inline; filename=orders.pdf");
             return ResponseEntity
                     .ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(new InputStreamResource(bis));
+                    .body(new InputStreamResource(ba));
         }
         return null;
     }

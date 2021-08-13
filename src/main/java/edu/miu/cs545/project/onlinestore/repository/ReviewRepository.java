@@ -10,10 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends CrudRepository<Review,Long> {
-    Optional<Review> findById(long reviewId);
-    Review save(Review review);
-
     @Query(value = "SELECT r FROM Review r WHERE r.approved = false")
     List<Review> getReviewsNotApproved();
+    Review save(Review review);
+    Optional<Review> findById(long reviewId);
 
 }
