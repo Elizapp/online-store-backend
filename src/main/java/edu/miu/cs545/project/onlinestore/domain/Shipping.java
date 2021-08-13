@@ -37,4 +37,15 @@ public class Shipping implements Serializable {
     private String receiverZipcode;
 
 
+    public Shipping(String firstName, String lastName, String phoneNumber, LocalDate now, String street, String fairfield, String iowa, String usa, String i) {
+    this.receiverFirstName = firstName;
+    this.receiverLastName = lastName;
+    this.receiverPhone = phoneNumber;
+    this.deliveredDate = now;
+    this.receiverStreet = street;
+    this.receiverCity = fairfield;
+    this.receiverState = iowa;
+    this.receiverCountry = usa;
+    this.receiverZipcode = i;
+    }
 }

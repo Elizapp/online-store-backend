@@ -27,11 +27,19 @@ public class Payment implements Serializable {
     private LocalDate paymentDate;
 
     @NotNull
-    @Size(min = 10, max = 500)
+//    @Size(min = 10, max = 500)
     private Double paymentAmount;
 
     @NotNull
     private String cardHolder;
 
     private String paymentMethod;
+
+    public Payment(LocalDate now, Double i, String john, String credit) {
+        this.paymentDate = now;
+        this.paymentAmount = i;
+        this.cardHolder = john;
+        this.paymentMethod = credit;
+
+    }
 }

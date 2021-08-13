@@ -7,8 +7,11 @@ import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
 import edu.miu.cs545.project.onlinestore.dto.ShoppingCartDTO;
 import edu.miu.cs545.project.onlinestore.dto.ShoppingCartLineDTO;
 import edu.miu.cs545.project.onlinestore.service.ShoppingCartService;
+import edu.miu.cs545.project.onlinestore.service.UserDetailsImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/shoppingcarts")
 public class ShoppingCartController {
 
@@ -79,6 +83,14 @@ public class ShoppingCartController {
 
     @PostMapping("/{cartId}/createorder")
     public void createOrder(@PathVariable Long cartId, @RequestBody ShippingAndPayment shippingAndPayment) {
-        orderController.createOrderFromCart(cartId, shippingAndPayment.shipping, shippingAndPayment.payment);
+//        orderController.createOrderFromCart(cartId, shippingAndPayment.shipping, shippingAndPayment.payment);
+
+        //simulation
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
+        Shipping shipping = new Shipping(userdetails.getUser().getFirstName(),userdetails.getUser().getLastName(),userdetails.getUser().getPhoneNumber(),java.time.LocalDate.now(),"1000 N 4th Street","Fairfield","IOWA","USA","52557");
+        Payment payment = new Payment(java.time.LocalDate.now(),new Double(10.0),"John","Credit");
+        orderController.createOrderFromCart(cartId, shipping, payment);
+        ///////////////////////
     }
 }
