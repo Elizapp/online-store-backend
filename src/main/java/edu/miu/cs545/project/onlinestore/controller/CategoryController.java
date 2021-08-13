@@ -23,7 +23,7 @@ public class CategoryController {
     @GetMapping
     public List<CategoryDTO> getAll(){
         List<Category> categories = categoryService.getAll();
-        return categories.stream().map(cat->modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
+        return categories.stream().map(category->modelMapper.map(category, CategoryDTO.class)).collect(Collectors.toList());
     }
 
     @PostMapping()
