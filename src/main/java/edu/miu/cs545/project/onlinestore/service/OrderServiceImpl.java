@@ -27,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     BuyerRepository buyerRepository;
     @Autowired
     private OrderRepository orderRepository;
+
     @Autowired
     private PaymentService paymentService;
     @Autowired
