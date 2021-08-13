@@ -1,3 +1,12 @@
+
+#PASSWORD FOR ALL USERS :
+ admin admin
+buyer admin
+seller admin
+
+
+
+
 #roles insertion
 INSERT INTO roles (name) VALUES ('ADMIN');
 INSERT INTO roles (name) VALUES ('SELLER');
@@ -15,10 +24,10 @@ INSERT INTO users (city ,  country ,  state ,  street ,  zipcode ,  email ,  ena
 ( NULL, NULL, NULL, NULL, NULL, 'admin@example.com', b'1', 'Admin', 'Admin', '$2a$10$JirblkU.nrFQVWpRJkeTcev6J1I/UoZvIDdjPUiIHKAeBrtZq8iYe', NULL, NULL, 'admin');
 
 INSERT INTO users (city ,  country ,  state ,  street ,  zipcode ,  email ,  enabled ,  first_name ,  last_name ,  password ,  phone_number ,  photo ,  username ) VALUES
-( NULL, NULL, NULL, NULL, NULL, 'buyer@example.com', b'1', 'Buyer', 'Buyer', '$2a$10$JirblkU.nrFQVWpRJkeTcev6J1I/UoZvIDdjPUiIHKAeBrtZq8iYe', NULL, NULL, 'buyer');
+( NULL, NULL, NULL, NULL, NULL, 'seller@example.com', b'1', 'Seller', 'Seller', '$2a$10$JirblkU.nrFQVWpRJkeTcev6J1I/UoZvIDdjPUiIHKAeBrtZq8iYe', NULL, NULL, 'seller');
 
 INSERT INTO users (city ,  country ,  state ,  street ,  zipcode ,  email ,  enabled ,  first_name ,  last_name ,  password ,  phone_number ,  photo ,  username ) VALUES
-( NULL, NULL, NULL, NULL, NULL, 'seller@example.com', b'1', 'Seller', 'Seller', '$2a$10$JirblkU.nrFQVWpRJkeTcev6J1I/UoZvIDdjPUiIHKAeBrtZq8iYe', NULL, NULL, 'seller');
+( NULL, NULL, NULL, NULL, NULL, 'buyer@example.com', b'1', 'Buyer', 'Buyer', '$2a$10$JirblkU.nrFQVWpRJkeTcev6J1I/UoZvIDdjPUiIHKAeBrtZq8iYe', NULL, NULL, 'buyer');
 
 #user roles insertion
 INSERT INTO USERS_ROLES(user_id,role_id)
@@ -30,9 +39,15 @@ SELECT (SELECT ID FROM USERS WHERE USERNAME='ADMIN' LIMIT 1) , (SELECT ID FROM R
 INSERT INTO USERS_ROLES(user_id,role_id)
 SELECT (SELECT ID FROM USERS WHERE USERNAME='BUYER' LIMIT 1) , (SELECT ID FROM ROLES WHERE NAME='BUYER' LIMIT 1);
 
-#Buyer insertion
+#Admins insertion
+ insert into admins (level,user_id) values(1,1);
+#Sellers insertion
+ insert into sellers (approved,user_id) values(1,2);
+#Buyers insertion
+insert into buyers (user_id,accumulated_points)  values(3,0);
 
-#Seller insertion
 
-#Admin insertion
+
+
+
 
