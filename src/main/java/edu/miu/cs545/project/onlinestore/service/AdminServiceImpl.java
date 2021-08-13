@@ -8,5 +8,4 @@ public class AdminServiceImpl implements AdminService{
     public Boolean approveSeller(long id) {
         return null;
     }
-
 }
