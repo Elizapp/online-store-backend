@@ -15,8 +15,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "shoppingcartlines")
 public class ShoppingCartLine implements Serializable {
-    private static final long serialVersionUID = 7359591984285268537L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
