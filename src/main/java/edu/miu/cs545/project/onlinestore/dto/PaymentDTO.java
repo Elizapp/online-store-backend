@@ -9,12 +9,8 @@ import java.time.LocalDate;
 @Setter
 public class PaymentDTO {
     private long id;
-
     private LocalDate paymentDate;
-
     private Double paymentAmount;
-
     private String cardHolder;
-
     private String paymentMethod;
 }

@@ -18,14 +18,11 @@ import java.util.List;
 @Entity
 @Table(name = "shoppingcarts")
 public class ShoppingCart implements Serializable {
-    private static final long serialVersionUID = 7359591984285268537L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
 
-    //@Timespan
     private LocalDate cartDate;
 
     @Digits(integer = 10, fraction = 2)
@@ -39,5 +36,4 @@ public class ShoppingCart implements Serializable {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name="buyer_id")
     Buyer buyer;
-
 }

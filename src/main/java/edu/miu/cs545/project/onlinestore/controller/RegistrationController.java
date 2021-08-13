@@ -15,7 +15,6 @@ public class RegistrationController {
 
     @PostMapping
     public String register(@RequestBody NewUserDTO user){
-
         return userDetailsService.signUpUser(user);
     }
 }

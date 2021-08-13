@@ -1,7 +1,5 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
-import edu.miu.cs545.project.onlinestore.domain.Payment;
-import edu.miu.cs545.project.onlinestore.domain.Shipping;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
 import edu.miu.cs545.project.onlinestore.dto.ShoppingCartDTO;
@@ -22,14 +20,10 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RequestMapping("/api/shoppingcarts")
 public class ShoppingCartController {
-
-
     @Autowired
     ModelMapper modelMapper;
-
     @Autowired
     private ShoppingCartService shoppingCartService;
-
     @Autowired
     OrderController orderController;
 
@@ -41,7 +35,6 @@ public class ShoppingCartController {
         }
         return null;
     }
-
 
     @GetMapping("/{cartId}/cartlines")
     public List<ShoppingCartLineDTO> getLinesFromShoppingCart(@PathVariable Long cartId){
@@ -55,27 +48,22 @@ public class ShoppingCartController {
     public ShoppingCart createShoppingCart(@RequestBody ShoppingCart cart){
         return shoppingCartService.createShoppingCart(cart);
     }
-
-    // updating  shping cart line in shopping cart
+       // updating  shipping cart line in shopping cart
     @PutMapping("/{cartId}/cartlines")
     public void updateLineInShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
         shoppingCartService.updateLineInShoppingCart(cartId, cartLine);
     }
-
-    // adding shopping cart  line to shopping cart
+       // adding shopping cart  line to shopping cart
     @PostMapping("/{cartId}/cartlines")
     public void addLineToShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
         shoppingCartService.addLineToShoppingCart(cartId, cartLine);
     }
-
-
-    // updating the quantity in shopping cart
+       // updating the quantity in shopping cart
     @PutMapping("/{cartId}/cartlines/{lineId}")
     public void updateLineInShoppingCart(@PathVariable Long cartId, @PathVariable Long lineId, @RequestBody Integer newQuantity){
         shoppingCartService.updateQuantityInShoppingCartLine(cartId, lineId, newQuantity);
     }
-
-    // removing line from shopping cart
+      // removing line from shopping cart
     @DeleteMapping("/{cartId}/cartlines/{cartLineId}")
     public void removeLineToShoppingCart(@PathVariable Long cartId, @PathVariable Long cartLineId){
         shoppingCartService.removeLineFromShoppingCart(cartId, cartLineId);

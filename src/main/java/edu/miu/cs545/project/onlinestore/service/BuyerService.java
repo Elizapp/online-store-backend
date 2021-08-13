@@ -7,5 +7,4 @@ import java.util.List;
 public interface BuyerService {
     Buyer findBuyerById(Long id);
     List<Buyer> findAll();
-
 }

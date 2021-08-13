@@ -9,7 +9,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class UserDTO {
-
     private Long id;
     private String username;
     private boolean enabled;
@@ -18,6 +17,5 @@ public class UserDTO {
     private String email;
     private String photo;
     private String phoneNumber;
-  //  private AddressDTO address;
     private Set<RoleDTO> roles = new HashSet<>();
 }

@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    List<Product> getAll();
+    Optional<Product> getProductById(Long id);
+
     Boolean createProduct(Product product, Long id);
     void deleteProduct(Long id);
-    Optional<Product> getProductById(Long id);
-    List<Review> getApprovedReviewsByProductId(Long id);
     Boolean updateProduct(Product product, Long id);
+    List<Review> getApprovedReviewsByProductId(Long id);
+    List<Product> getAll();
 }

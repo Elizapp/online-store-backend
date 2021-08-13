@@ -12,11 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends CrudRepository<Product,Long> {
-    public List<Product> findAll();
-    public Optional<Product> findById(Long productId);
     public Product save(Product product);
+    public Optional<Product> findById(Long productId);
+    public List<Product> findAll();
     public void deleteById(Long productId);
-
     @Query(value = "SELECT p.reviews FROM Product p WHERE p.id = :productId")
     public List<Review> findReviewsByProductId(@Param("productId") Long productId);
 

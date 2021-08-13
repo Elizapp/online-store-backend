@@ -14,13 +14,20 @@ public class ReviewServiceImpl implements ReviewService{
     @Autowired
     private ReviewRepository reviewRepository;
 
+
+    @Override
+    public void createReview(Review review) {
+        reviewRepository.save(review);
+    }
+
     @Override
     public List<Review> getReviewsNotApproved() {
         return reviewRepository.getReviewsNotApproved();
     }
+
     @Override
-    public void createReview(Review review) {
-        reviewRepository.save(review);
+    public Optional<Review> getReviewById(Long id) {
+        return reviewRepository.findById(id);
     }
 
     @Override
@@ -32,11 +39,6 @@ public class ReviewServiceImpl implements ReviewService{
             return true;
         }
         return false;
-    }
-
-    @Override
-    public Optional<Review> getReviewById(Long id) {
-        return reviewRepository.findById(id);
     }
 
 }

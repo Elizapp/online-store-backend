@@ -1,9 +1,9 @@
 package edu.miu.cs545.project.onlinestore.service;
 
-import edu.miu.cs545.project.onlinestore.domain.Buyer;
 import edu.miu.cs545.project.onlinestore.repository.BuyerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.miu.cs545.project.onlinestore.domain.Buyer;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 

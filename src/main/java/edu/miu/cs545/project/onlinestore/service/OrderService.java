@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    public Optional<Order> getOrderById(long orderId);
     List<Order> getOrderForBuyer(long buyerId);
+    public Optional<Order> getOrderById(long orderId);
     public String getOrderStatus(long orderId);
-    Boolean shippedOrder(long orderId);
+    void createOrderFromCart(Long cartId, Shipping shipping, Payment payment);
     List<Order> getAll();
     Boolean deliveredOrder(long orderId);
     Boolean cancelOrder(long orderId);
     List<Order> getOrderBySellerId(long sellerId);
-    void createOrderFromCart(Long cartId, Shipping shipping, Payment payment);
-    public List<OrderLine> getOrderLineById(long orderId);
     public Order createOrder(Order newOrder);
+    public List<OrderLine> getOrderLineById(long orderId);
+    Boolean shippedOrder(long orderId);
 }

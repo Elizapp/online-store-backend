@@ -27,20 +27,16 @@ public class AuthenticateController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private UserDetailsService jwtInMemoryUserDetailsService;
 
-
-
     @GetMapping("/logout")
     public Boolean Logout(HttpServletRequest request, HttpServletResponse response){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null){
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
             return true;
         }
         return false;

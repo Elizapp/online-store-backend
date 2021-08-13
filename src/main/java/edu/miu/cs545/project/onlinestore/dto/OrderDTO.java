@@ -10,9 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 public class OrderDTO {
-
     private long id;
-
     private LocalDate orderDate;
     private Double totalMoney;
     private String currentStatus;

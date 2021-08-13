@@ -23,27 +23,21 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/sellers")
 public class SellerController {
-
     @Autowired
     SellerService sellerService;
-
     @Autowired
     private ProductService productService;
-
     @Autowired
     OrderService orderService;
-
     @Autowired
     ModelMapper modelMapper;
 
     @GetMapping
     public List<SellerDTO> getAll(){
-
         List<Seller> sellers = sellerService.getAll();
         return sellers.stream().map(sel->modelMapper.map(sel, SellerDTO.class)).collect(Collectors.toList());
     }
-
-    // to generated products by seller
+          // products by seller
     @GetMapping("/{id}/products")
     public List<ProductDTO> getProductsBySellerId(@PathVariable("id") Long id){
         List<Product> products = sellerService.getProductsBySellerId(id);
@@ -62,10 +56,9 @@ public class SellerController {
     public List<OrderDTO> getOrdersBySellerId(@PathVariable("id") Long id){
         List<Order> orders = orderService.getOrderBySellerId(id);
         return orders.stream()
-                .map(o -> modelMapper.map(o, OrderDTO.class))
+                .map(ord -> modelMapper.map(ord, OrderDTO.class))
                 .collect(Collectors.toList());
     }
-
 
     @GetMapping("/{id}")
     public SellerDTO getSellerById(@PathVariable("id") Long id){
@@ -75,16 +68,13 @@ public class SellerController {
 
     @GetMapping("/{orderId}/shipped")
     public @ResponseBody Boolean shippedOrder(@PathVariable long orderId){
-
         return orderService.shippedOrder(orderId);
     }
 
     @GetMapping("/{orderId}/cancel")
     public @ResponseBody Boolean cancelOrder(@PathVariable long orderId){
-
         return orderService.cancelOrder(orderId);
     }
-
 
     @PostMapping("/updateproduct")
     public Boolean updateProduct(@RequestBody ProductDTO productDTO){
@@ -106,6 +96,5 @@ public class SellerController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return productService.createProduct(product, userDetails.getUser().getId());
     }
-
 }
 

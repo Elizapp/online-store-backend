@@ -10,9 +10,8 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Long> {
     public List<Order> findAllByBuyerId(long buyerId);
-    public Optional<Order> findById(Long Id);
     public  List<Order> findAll();
-
+    public Optional<Order> findById(Long Id);
     public Order findOrderById(Long id);
 
 

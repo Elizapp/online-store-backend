@@ -16,8 +16,6 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class Category implements Serializable {
-    private static final long serialVersionUID = 7359591984285268537L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull

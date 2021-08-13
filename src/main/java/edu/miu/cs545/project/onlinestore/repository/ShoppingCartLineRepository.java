@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShoppingCartLineRepository extends CrudRepository<ShoppingCartLine,Long> {
-    public ShoppingCartLine save(ShoppingCartLine cartLine);
     public void deleteById(Long cartLineId);
+    public ShoppingCartLine save(ShoppingCartLine cartLine);
+
 }

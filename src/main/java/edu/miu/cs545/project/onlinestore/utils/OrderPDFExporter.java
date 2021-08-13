@@ -24,20 +24,14 @@ public class OrderPDFExporter{
         PdfPCell cell = new PdfPCell();
         cell.setBackgroundColor(Color.BLUE);
         cell.setPadding(5);
-
         Font font = FontFactory.getFont(FontFactory.HELVETICA);
         font.setColor(Color.WHITE);
-
         cell.setPhrase(new Phrase("ID", font));
-
         table.addCell(cell);
-
         cell.setPhrase(new Phrase("Date", font));
         table.addCell(cell);
-
         cell.setPhrase(new Phrase("Total", font));
         table.addCell(cell);
-
         cell.setPhrase(new Phrase("Status", font));
         table.addCell(cell);
 
@@ -53,33 +47,25 @@ public class OrderPDFExporter{
     }
 
     public ByteArrayInputStream export() throws DocumentException, IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream outFile = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, out);
-
+        PdfWriter.getInstance(document, outFile);
         document.open();
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         font.setSize(18);
         font.setColor(Color.BLUE);
-
         Paragraph p = new Paragraph("List of Orders", font);
         p.setAlignment(Paragraph.ALIGN_CENTER);
-
         document.add(p);
-
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100f);
         table.setWidths(new float[] {1.5f, 3.5f, 3.0f, 3.0f});
         table.setSpacingBefore(10);
-
         writeTableHeader(table);
         writeTableData(table);
-
         document.add(table);
-
         document.close();
-        return new ByteArrayInputStream(out.toByteArray());
-
+        return new ByteArrayInputStream(outFile.toByteArray());
     }
 }
 
