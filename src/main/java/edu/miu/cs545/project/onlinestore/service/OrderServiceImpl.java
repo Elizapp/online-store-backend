@@ -25,29 +25,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     BuyerRepository buyerRepository;
-
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private PaymentService paymentService;
-
+    @Autowired
+    private ShoppingCartService shoppingCartService;
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
     @Autowired
     private ShippingService shippingService;
 
-    @Autowired
-    private ShoppingCartService shoppingCartService;
-
-    @Autowired
-    private JavaMailSender javaMailSender;
-
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
-
 
     @Override
-    public Optional<Order> getOrderById(long orderId){
-        return orderRepository.findById(orderId);
+    public Optional<Order> getOrderById(long id){
+        return orderRepository.findById(id);
     }
 
     @Override
@@ -56,14 +50,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderLine> getOrderLineById(long orderId){
+    public List<OrderLine> getOrderLineById(long id){
         List<OrderLine> listOrderLine = new ArrayList<>();
-        return orderLineRepository.getOrderLineById(orderId);
+        return orderLineRepository.getOrderLineById(id);
     }
 
     @Override
-    public List<Order> getOrderForBuyer(long buyerId) {
-        return orderRepository.findAllByBuyerId(buyerId);
+    public List<Order> getOrderForBuyer(long id) {
+        return orderRepository.findAllByBuyerId(id);
     }
 
 
@@ -111,9 +105,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrderBySellerId(long sellerId) {
+    public List<Order> getOrderBySellerId(long id) {
 
-        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(orderLine -> orderLine.getProduct().getSeller().getId() == sellerId).collect(Collectors.toList());
+        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(orderLine -> orderLine.getProduct().getSeller().getId() == id).collect(Collectors.toList());
 
         List<Long> ids = lines.stream().map( orderLine->orderLine.getId()).collect(Collectors.toList());
         List<Order> orders = orderRepository.findAll().stream().filter(ord->ids.contains(ord.getId())).collect(Collectors.toList());
@@ -162,8 +156,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Boolean deliveredOrder(long orderId) {
-        Order order = orderRepository.findOrderById(orderId);
+    public Boolean deliveredOrder(long id) {
+        Order order = orderRepository.findOrderById(id);
         if(order != null)
         {
             order.setCurrentStatus("DELIVERED");

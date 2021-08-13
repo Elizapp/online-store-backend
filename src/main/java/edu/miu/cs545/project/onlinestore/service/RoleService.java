@@ -1,11 +1,11 @@
 package edu.miu.cs545.project.onlinestore.service;
 
-import edu.miu.cs545.project.onlinestore.domain.Role;
-
 import java.util.List;
 
+import edu.miu.cs545.project.onlinestore.domain.Role;
+
 public interface RoleService {
-    List<Role> findAll();
     Role findRoleByName(String name);
+    List<Role> findAll();
     Role findRoleById(Long id);
 }
