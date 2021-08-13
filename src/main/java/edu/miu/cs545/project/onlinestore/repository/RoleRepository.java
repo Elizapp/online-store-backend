@@ -7,9 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RoleRepository extends CrudRepository<Role,Long> {
-    public List<Role> findAll();
-    public Role findRoleById(Long id);
-    public Role findRoleByName(String name);
-    public List<Role> findRolesByIdIn(List<Long> Ids);
+public interface RoleRepository extends CrudRepository<Role, Long> {
+    List<Role> findAll();
+
+    Role findRoleById(Long id);
+
+    Role findRoleByName(String name);
+
+    List<Role> findRolesByIdIn(List<Long> Ids);
 }

@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReviewRepository extends CrudRepository<Review,Long> {
+public interface ReviewRepository extends CrudRepository<Review, Long> {
     Optional<Review> findById(long reviewId);
+
     Review save(Review review);
 
     @Query(value = "SELECT r FROM Review r WHERE r.approved = false")

@@ -18,45 +18,39 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements IOrderService {
 
+    @Autowired
+    BuyerRepository buyerRepository;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private JavaMailSender javaMailSender;
-
     @Autowired
     private OrderLineRepository orderLineRepository;
-
-
     @Autowired
-    private ShippingService shippingService;
-
+    private IShippingService shippingService;
     @Autowired
-    private PaymentService paymentService;
-
+    private IPaymentService paymentService;
     @Autowired
-    BuyerRepository buyerRepository;
-
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+    private IShoppingCartService shoppingCartService;
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
 
     @Override
-    public Optional<Order> getOrderById(long orderId){
+    public Optional<Order> getOrderById(long orderId) {
         return orderRepository.findById(orderId);   //checked
     }
 
     @Override
-    public String getOrderStatus(long orderId){//checked
+    public String getOrderStatus(long orderId) {//checked
         return orderRepository.findById(orderId).get().getCurrentStatus();
     }
 
     @Override
-    public Order createOrder(Order newOrder){
+    public Order createOrder(Order newOrder) {
         return orderRepository.save(newOrder);
     } //checked
 
@@ -71,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderLine> getOrderLineById(long orderId){
+    public List<OrderLine> getOrderLineById(long orderId) {
         List<OrderLine> listOrderLine = new ArrayList<>();
         return orderLineRepository.getOrderLineById(orderId);
     }
@@ -79,18 +73,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getOrderBySellerId(long sellerId) {
 
-        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(ol->ol.getProduct().getSeller().getId() == sellerId).collect(Collectors.toList());
+        List<OrderLine> lines = orderLineRepository.findAll().stream().filter(ol -> ol.getProduct().getSeller().getId() == sellerId).collect(Collectors.toList());
 
-        List<Long> ids = lines.stream().map( l->l.getId()).collect(Collectors.toList());
-        List<Order> orders = orderRepository.findAll().stream().filter(o->ids.contains(o.getId())).collect(Collectors.toList());
+        List<Long> ids = lines.stream().map(l -> l.getId()).collect(Collectors.toList());
+        List<Order> orders = orderRepository.findAll().stream().filter(o -> ids.contains(o.getId())).collect(Collectors.toList());
         return orders;
     }
 
     @Override
     public Boolean cancelOrder(long orderId) {
         Order order = orderRepository.findOrderById(orderId);
-        if(order != null)
-        {
+        if (order != null) {
             order.setCurrentStatus("CANCELLED");
             orderRepository.save(order);
             return true;
@@ -101,8 +94,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean shippedOrder(long orderId) {
         Order order = orderRepository.findOrderById(orderId);
-        if(order != null)
-        {
+        if (order != null) {
             order.setCurrentStatus("SHIPPED");
             orderRepository.save(order);
             return true;
@@ -113,8 +105,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean deliveredOrder(long orderId) {
         Order order = orderRepository.findOrderById(orderId);
-        if(order != null)
-        {
+        if (order != null) {
             order.setCurrentStatus("DELIVERED");
             orderRepository.save(order);
             return true;
@@ -138,17 +129,17 @@ public class OrderServiceImpl implements OrderService {
             msg.setText(content);
 
             javaMailSender.send(msg);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    public void createOrderFromCart(Long cartId, Shipping shipping, Payment payment){
+    public void createOrderFromCart(Long cartId, Shipping shipping, Payment payment) {
         Order order = new Order();
         Shipping shipping1 = shippingService.createShipping(shipping);
         Payment payment1 = paymentService.createPayment(payment);
         Optional<ShoppingCart> cart = shoppingCartService.getShoppingCart(cartId);
-        if(cart.isPresent()){
+        if (cart.isPresent()) {
             ShoppingCart cart1 = cart.get();
             order.setCurrentStatus("NEW");
             order.setOrderDate(LocalDate.now());
@@ -171,11 +162,11 @@ public class OrderServiceImpl implements OrderService {
             buyerRepository.save(buyer);//gain point for buyer.
 
             shoppingCartRepository.save(cart1);
-            sendEmail(buyer.getUser().getEmail(),order1);
+            sendEmail(buyer.getUser().getEmail(), order1);
         }
     }
 
-    private OrderLine createOrderLineFromCartLine(ShoppingCartLine cartLine){
+    private OrderLine createOrderLineFromCartLine(ShoppingCartLine cartLine) {
         OrderLine line = new OrderLine();
         line.setProduct(cartLine.getProduct());
         line.setPrice(cartLine.getPrice());

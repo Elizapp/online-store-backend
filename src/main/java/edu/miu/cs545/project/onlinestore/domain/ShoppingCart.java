@@ -19,25 +19,19 @@ import java.util.List;
 @Table(name = "shoppingcarts")
 public class ShoppingCart implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "buyer_id")
+    Buyer buyer;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
-
     //@Timespan
     private LocalDate cartDate;
-
     @Digits(integer = 10, fraction = 2)
     private Double totalMoney;
-
     private boolean completed;
-
-    @OneToMany(mappedBy="cart")
+    @OneToMany(mappedBy = "cart")
     private List<ShoppingCartLine> cartLines = new ArrayList();
-
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name="buyer_id")
-    Buyer buyer;
 
 }

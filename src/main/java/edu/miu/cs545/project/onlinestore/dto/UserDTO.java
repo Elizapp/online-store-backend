@@ -18,6 +18,6 @@ public class UserDTO {
     private String email;
     private String photo;
     private String phoneNumber;
-  //  private AddressDTO address;
+    //  private AddressDTO address;
     private Set<RoleDTO> roles = new HashSet<>();
 }

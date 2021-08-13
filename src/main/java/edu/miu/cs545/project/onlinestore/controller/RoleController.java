@@ -1,43 +1,37 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
 import edu.miu.cs545.project.onlinestore.domain.Role;
-import edu.miu.cs545.project.onlinestore.dto.RoleDTO;
-import edu.miu.cs545.project.onlinestore.service.RoleService;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
     @Autowired
-    RoleService roleService;
-
-    @Autowired
-    ModelMapper modelMapper;
+    IRoleService roleService;
 
     @GetMapping
-    public List<RoleDTO> getAll(){
-
-        List<Role> roles = roleService.findAll();
-        return roles.stream().map(r->modelMapper.map(r, RoleDTO.class)).collect(Collectors.toList());
+    public ResponseEntity<?> getAll() {
+        Collection<Role> roles = roleService.findAll();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public RoleDTO getRoleById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getRoleById(@PathVariable("id") Long id) {
 
         Role role = roleService.findRoleById(id);
-        return modelMapper.map(role, RoleDTO.class);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
     @GetMapping("/role")
-    public RoleDTO getRoleByName(@RequestParam("name") String name){
-
+    public ResponseEntity<?> getRoleByName(@RequestParam("name") String name) {
         Role role = roleService.findRoleByName(name);
-        return modelMapper.map(role, RoleDTO.class);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
 }

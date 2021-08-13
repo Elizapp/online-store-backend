@@ -1,80 +1,80 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
-import edu.miu.cs545.project.onlinestore.domain.Payment;
-import edu.miu.cs545.project.onlinestore.domain.Shipping;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
-import edu.miu.cs545.project.onlinestore.dto.ShoppingCartDTO;
-import edu.miu.cs545.project.onlinestore.dto.ShoppingCartLineDTO;
-import edu.miu.cs545.project.onlinestore.service.ShoppingCartService;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.service.IShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/shoppingcarts")
 public class ShoppingCartController {
     @Autowired
-    private ShoppingCartService shoppingCartService;
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    @Autowired
     OrderController orderController;
 
+    //    @Autowired
+//    ModelMapper modelMapper;
+    @Autowired
+    private IShoppingCartService shoppingCartService;
+
     @PostMapping()
-    public ShoppingCart createShoppingCart(@RequestBody ShoppingCart cart){
-        return shoppingCartService.createShoppingCart(cart);
+    public ResponseEntity<?> createShoppingCart(@RequestBody ShoppingCart cart) {
+        return new ResponseEntity<>(shoppingCartService.createShoppingCart(cart), HttpStatus.CREATED);
     }
 
     @GetMapping("/{cartId}")
-    public ShoppingCartDTO getShoppingCart(@PathVariable Long cartId){
+    public ResponseEntity<?> getShoppingCart(@PathVariable Long cartId) {
         Optional<ShoppingCart> cart = shoppingCartService.getShoppingCart(cartId);
-        if(cart.isPresent()){
-            return modelMapper.map(cart.get(), ShoppingCartDTO.class);
+        if (cart.isPresent()) {
+            return new ResponseEntity<>(cart, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>("Cart does not exist", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{cartId}/cartlines")
-    public List<ShoppingCartLineDTO> getLinesFromShoppingCart(@PathVariable Long cartId){
-        List<ShoppingCartLine> cartLines = shoppingCartService.getLinesByShoppingCart(cartId);
-        return cartLines.stream()
-                .map(line -> modelMapper.map(line, ShoppingCartLineDTO.class))
-                .collect(Collectors.toList());
+    public ResponseEntity<?> getLinesFromShoppingCart(@PathVariable Long cartId) {
+        return new ResponseEntity<>(shoppingCartService.getLinesByShoppingCart(cartId), HttpStatus.OK);
     }
 
     // add line to shopping cart
     @PostMapping("/{cartId}/cartlines")
-    public void addLineToShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
+    public void addLineToShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine) {
         shoppingCartService.addLineToShoppingCart(cartId, cartLine);
     }
+
     // update line in shopping cart
     @PutMapping("/{cartId}/cartlines")
-    public void updateLineInShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine){
+    public ResponseEntity<?> updateLineInShoppingCart(@PathVariable Long cartId, @RequestBody ShoppingCartLine cartLine) {
         shoppingCartService.updateLineInShoppingCart(cartId, cartLine);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     // update quantity in shopping cart
     @PutMapping("/{cartId}/cartlines/{lineId}")
-    public void updateLineInShoppingCart(@PathVariable Long cartId, @PathVariable Long lineId, @RequestBody Integer newQuantity){
+    public ResponseEntity<?> updateLineInShoppingCart(@PathVariable Long cartId, @PathVariable Long lineId, @RequestBody Integer newQuantity) {
         shoppingCartService.updateQuantityInShoppingCartLine(cartId, lineId, newQuantity);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     // remove line from shopping cart
     @DeleteMapping("/{cartId}/cartlines/{cartLineId}")
-    public void removeLineToShoppingCart(@PathVariable Long cartId, @PathVariable Long cartLineId){
+    public ResponseEntity<?> removeLineToShoppingCart(@PathVariable Long cartId, @PathVariable Long cartLineId) {
         shoppingCartService.removeLineFromShoppingCart(cartId, cartLineId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/{cartId}/createorder")
-    public void createOrder(@PathVariable Long cartId, @RequestBody ShippingAndPayment shippingAndPayment) {
-        orderController.createOrderFromCart(cartId, shippingAndPayment.shipping, shippingAndPayment.payment);
-    }
+
+//    @PostMapping("/{cartId}/createorder")
+//    public void createOrder(@PathVariable Long cartId, @RequestBody ShippingAndPayment shippingAndPayment) {
+//        orderController.createOrderFromCart(cartId, shippingAndPayment.shipping, shippingAndPayment.payment);
+////        return orderService.createOrder(order);
+//    }   //checked
+
+
 }
+
 

@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class SellerServiceImpl implements SellerService{
+public class SellerServiceImpl implements ISellerService {
     @Autowired
     SellerRepository sellerRepository;
 
@@ -19,7 +20,7 @@ public class SellerServiceImpl implements SellerService{
     }
 
     @Override
-    public Seller getSellerByID(Long id) {
+    public Optional<Seller> getSellerByID(Long id) {
         return sellerRepository.getSellerById(id);
     }
 

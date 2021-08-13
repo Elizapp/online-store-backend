@@ -14,16 +14,13 @@ import java.io.Serializable;
 @Table(name = "admins")
 public class Admin implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    User user;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   // @NotNull
+    // @NotNull
     private long id;
-
     private String level;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="user_id")
-    User user;
 
 }

@@ -20,32 +20,24 @@ import java.util.List;
 @Table(name = "orders")
 public class Order implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "buyer_id")
+    Buyer buyer;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "payment_id")
+    Payment payment;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "shipping_id")
+    Shipping shipping;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
-
     private LocalDate orderDate;
-
     @Digits(integer = 10, fraction = 2)
     @NotNull
     private Double totalMoney;
-
     private String currentStatus;
-
-    @OneToMany(mappedBy="order")
+    @OneToMany(mappedBy = "order")
     private List<OrderLine> cartLines = new ArrayList();
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="buyer_id")
-    Buyer buyer;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="payment_id")
-    Payment payment;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="shipping_id")
-    Shipping shipping;
 }

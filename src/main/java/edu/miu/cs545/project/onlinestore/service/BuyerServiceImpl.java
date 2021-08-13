@@ -5,19 +5,20 @@ import edu.miu.cs545.project.onlinestore.repository.BuyerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class BuyerServiceImpl implements BuyerService{
+public class BuyerServiceImpl implements IBuyerService {
     @Autowired
     BuyerRepository buyerRepository;
+
     @Override
-    public List<Buyer> findAll() {
-        return buyerRepository.findAll();
+    public Optional<Buyer> findAll() {
+        return null; // buyerRepository.findAll();
     }
 
     @Override
-    public Buyer findBuyerById(Long id) {
-        return buyerRepository.findBuyerById(id);
+    public Optional<Buyer> findBuyerById(Long id) {
+        return buyerRepository.findById(id);
     }
 }

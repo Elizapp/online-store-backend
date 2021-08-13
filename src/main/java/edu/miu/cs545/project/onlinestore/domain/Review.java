@@ -18,28 +18,21 @@ import java.time.LocalDate;
 @Table(name = "reviews")
 public class Review implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    User user;
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    Product product;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
-
     @NotNull
     private LocalDate date;
-
     @Size(min = 10, max = 500)
     @NotNull
     private String content;
-
     private int numberOfStars;
-
     private boolean approved;
-
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name="user_id")
-    User user;
-
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JoinColumn(name="product_id")
-    Product product;
 }

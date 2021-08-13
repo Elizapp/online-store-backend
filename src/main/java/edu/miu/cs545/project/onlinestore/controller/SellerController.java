@@ -3,97 +3,95 @@ package edu.miu.cs545.project.onlinestore.controller;
 import edu.miu.cs545.project.onlinestore.domain.Order;
 import edu.miu.cs545.project.onlinestore.domain.Product;
 import edu.miu.cs545.project.onlinestore.domain.Seller;
-import edu.miu.cs545.project.onlinestore.dto.OrderDTO;
-import edu.miu.cs545.project.onlinestore.dto.ProductDTO;
-import edu.miu.cs545.project.onlinestore.dto.SellerDTO;
-import edu.miu.cs545.project.onlinestore.service.OrderService;
-import edu.miu.cs545.project.onlinestore.service.ProductService;
-import edu.miu.cs545.project.onlinestore.service.SellerService;
-import edu.miu.cs545.project.onlinestore.service.UserDetailsImpl;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.service.IOrderService;
+import edu.miu.cs545.project.onlinestore.service.IProductService;
+import edu.miu.cs545.project.onlinestore.service.ISellerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/sellers")
 public class SellerController {
     @Autowired
-    private ProductService productService;
+    ISellerService sellerService;
     @Autowired
-    SellerService sellerService;
+    IOrderService orderService;
     @Autowired
-    OrderService orderService;
-
-    @Autowired
-    ModelMapper modelMapper;
+    private IProductService productService;
 
     @GetMapping
-    public List<SellerDTO> getAll(){
+    public ResponseEntity<?> getAll() {
 
-        List<Seller> sellers = sellerService.getAll();
-        return sellers.stream().map(s->modelMapper.map(s, SellerDTO.class)).collect(Collectors.toList());
+        Collection<Seller> sellers = sellerService.getAll();
+        return new ResponseEntity<>(sellers, HttpStatus.OK);
     }
 
     @GetMapping("/notapproved")
-    public List<SellerDTO> getNotApprovedSellers(){
-        List<Seller> sellers = sellerService.getAll();
-        return sellers.stream().filter(s->!s.isApproved()).map(s->modelMapper.map(s, SellerDTO.class)).collect(Collectors.toList());
+    public ResponseEntity<?> getNotApprovedSellers() {
+        Collection<Seller> sellers = sellerService.getAll();
+        return new ResponseEntity<>(sellers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public SellerDTO getSellerById(@PathVariable("id") Long id){
-        Seller seller = sellerService.getSellerByID(id);
-        return modelMapper.map(seller, SellerDTO.class);
+    public ResponseEntity<?> getSellerById(@PathVariable("id") Long id) {
+        Optional<Seller> seller = sellerService.getSellerByID(id);
+        return new ResponseEntity<>(seller, HttpStatus.OK);
     }
+
     //Get products by seller
     @GetMapping("/{id}/products")
-    public List<ProductDTO> getProductsBySellerId(@PathVariable("id") Long id){
-        List<Product> products = sellerService.getProductsBySellerId(id);
-        return products.stream()
-                .map(p -> modelMapper.map(p, ProductDTO.class))
-                .collect(Collectors.toList());
+    public ResponseEntity<?> getProductsBySellerId(@PathVariable("id") Long id) {
+        Collection<Product> products = sellerService.getProductsBySellerId(id);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
+
     @GetMapping("/{id}/orders")
-    public List<OrderDTO> getOrdersBySellerId(@PathVariable("id") Long id){
-        List<Order> orders = orderService.getOrderBySellerId(id);
-        return orders.stream()
-                .map(o -> modelMapper.map(o, OrderDTO.class))
-                .collect(Collectors.toList());
+    public ResponseEntity<?> getOrdersBySellerId(@PathVariable("id") Long id) {
+        Collection<Order> orders = orderService.getOrderBySellerId(id);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}/cancel")
-    public @ResponseBody Boolean cancelOrder(@PathVariable long orderId){
-        return orderService.cancelOrder(orderId);
+    public @ResponseBody
+    ResponseEntity<?> cancelOrder(@PathVariable long orderId) {
+        boolean b = orderService.cancelOrder(orderId);
+        if (b) return new ResponseEntity<>(b, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(b, HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping("/{orderId}/shipped")
-    public @ResponseBody Boolean shippedOrder(@PathVariable long orderId){
-        return orderService.shippedOrder(orderId);
+    public @ResponseBody
+    ResponseEntity<?> shippedOrder(@PathVariable long orderId) {
+        boolean b = orderService.shippedOrder(orderId);
+        if (b) return new ResponseEntity<>(b, HttpStatus.OK);
+        return new ResponseEntity<>(b, HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping("/{orderId}/delivered")
-    public @ResponseBody Boolean deliveredOrder(@PathVariable long orderId){
-        return orderService.deliveredOrder(orderId);
+    public @ResponseBody
+    ResponseEntity<?> deliveredOrder(@PathVariable long orderId) {
+        boolean b = orderService.deliveredOrder(orderId);
+        if (b) return new ResponseEntity<>(b, HttpStatus.OK);
+        return new ResponseEntity<>(b, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/newproduct")
-    public Boolean createProduct(@RequestBody ProductDTO productDTO){
-        Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        return productService.createProduct(product, userdetails.getUser().getId());
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        boolean b = productService.createProduct(product);
+        if (b) return new ResponseEntity<>(b, HttpStatus.CREATED);
+        return new ResponseEntity<>(b, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/updateproduct")
-    public Boolean updateProduct(@RequestBody ProductDTO productDTO){
-        Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        return productService.updateProduct(product, userdetails.getUser().getId());
+    public ResponseEntity<?> updateProduct(@RequestBody Product product) {
+        boolean b = productService.createProduct(product);
+        if (b) return new ResponseEntity<>(b, HttpStatus.CREATED);
+        return new ResponseEntity<>(b, HttpStatus.BAD_REQUEST);
     }
 }
-

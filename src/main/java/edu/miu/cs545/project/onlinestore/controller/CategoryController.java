@@ -1,46 +1,51 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
 import edu.miu.cs545.project.onlinestore.domain.Category;
-import edu.miu.cs545.project.onlinestore.dto.CategoryDTO;
-import edu.miu.cs545.project.onlinestore.service.CategoryService;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
     @Autowired
-    CategoryService categoryService;
-    @Autowired
-    ModelMapper modelMapper;
+    ICategoryService categoryService;
+
 
     @GetMapping
-    public List<CategoryDTO> getAll(){
-        List<Category> categories = categoryService.getAll();
-        return categories.stream().map(c->modelMapper.map(c, CategoryDTO.class)).collect(Collectors.toList());
+    public ResponseEntity<?> getAll() {
+        Collection<Category> categories = categoryService.getAll();
+        return new ResponseEntity<Collection<Category>>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public CategoryDTO getCategoryById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") Long id) {
 
-        Category cat = categoryService.getCategoryById(id);
-        return modelMapper.map(cat, CategoryDTO.class);
+        Optional<Category> category = categoryService.getCategoryById(id);
+        if (category.isPresent())
+            return new ResponseEntity<>(category.get(), HttpStatus.OK);
+        return new ResponseEntity<>("Category does not exist", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/category")
-    public CategoryDTO getCategoryByName(@RequestParam("name") String name){
-        Category cat = categoryService.getCategoryByName(name);
-        return modelMapper.map(cat, CategoryDTO.class);
+    public ResponseEntity<?> getCategoryByName(@RequestParam("name") String name) {
+        Optional<Category> category = categoryService.getCategoryByName(name);
+        if (category.isPresent())
+            return new ResponseEntity<>(category.get(), HttpStatus.OK);
+        return new ResponseEntity<>("Category does not exist", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping()
-    public void createCategory(@RequestBody Category category){
+    public ResponseEntity<?> createCategory(@RequestBody Category category) {
         categoryService.createCategory(category);
+
+        return new ResponseEntity<>("Category created", HttpStatus.CREATED);
     }
 
 }

@@ -1,7 +1,17 @@
 package edu.miu.cs545.project.onlinestore.service;
 
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
+import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
+import edu.miu.cs545.project.onlinestore.repository.ShoppingCartLineRepository;
+import edu.miu.cs545.project.onlinestore.repository.ShoppingCartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class ShoppingCartServiceImpl implements ShoppingCartService{
+public class ShoppingCartServiceImpl implements IShoppingCartService {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
@@ -15,8 +25,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
 
     @Override
     public void addLineToShoppingCart(Long cartId, ShoppingCartLine cartline) {
-        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
-        if(cart.isPresent()){
+        Optional<ShoppingCart> cart = shoppingCartRepository.findById(cartId);
+        if (cart.isPresent()) {
             ShoppingCart foundCart = cart.get();
             foundCart.setTotalMoney(foundCart.getTotalMoney() + cartline.getLineTotal());
             cartline.setCart(foundCart);
@@ -27,13 +37,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
 
     @Override
     public void removeLineFromShoppingCart(Long cartId, Long cartLineId) {
-        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
-        if(cart.isPresent()){
+        Optional<ShoppingCart> cart = shoppingCartRepository.findById(cartId);
+        if (cart.isPresent()) {
             ShoppingCart foundCart = cart.get();
             Optional<ShoppingCartLine> cartLine = foundCart.getCartLines().stream()
-                    .filter(line-> line.getId() == cartLineId)
+                    .filter(line -> line.getId() == cartLineId)
                     .findFirst();
-            if(cartLine.isPresent()){
+            if (cartLine.isPresent()) {
                 foundCart.setTotalMoney(foundCart.getTotalMoney() - cartLine.get().getLineTotal());
                 shoppingCartRepository.save(foundCart);
                 shoppingCartLineRepository.deleteById(cartLineId);
@@ -53,9 +63,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
 
     @Override
     public void updateLineInShoppingCart(Long cartId, ShoppingCartLine newCartLine) {
-        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
-        Optional<ShoppingCartLine> cartLine =  shoppingCartLineRepository.findById(newCartLine.getId());
-        if(cart.isPresent() && cartLine.isPresent()){
+        Optional<ShoppingCart> cart = shoppingCartRepository.findById(cartId);
+        Optional<ShoppingCartLine> cartLine = shoppingCartLineRepository.findById(newCartLine.getId());
+        if (cart.isPresent() && cartLine.isPresent()) {
             ShoppingCart foundCart = cart.get();
             ShoppingCartLine foundCartLine = cartLine.get();
             foundCart.setTotalMoney(foundCart.getTotalMoney() - foundCartLine.getLineTotal() + newCartLine.getLineTotal());
@@ -67,13 +77,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
 
     @Override
     public void updateQuantityInShoppingCartLine(Long cartId, Long lineId, Integer newQuantity) {
-        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
-        Optional<ShoppingCartLine> cartLine =  shoppingCartLineRepository.findById(lineId);
-        if(cart.isPresent() && cartLine.isPresent()){
+        Optional<ShoppingCart> cart = shoppingCartRepository.findById(cartId);
+        Optional<ShoppingCartLine> cartLine = shoppingCartLineRepository.findById(lineId);
+        if (cart.isPresent() && cartLine.isPresent()) {
             ShoppingCart foundCart = cart.get();
             ShoppingCartLine foundCartLine = cartLine.get();
-            Double oldLineTotal =  foundCartLine.getLineTotal();
-            Double newLineTotal = foundCartLine.getPrice()*newQuantity;
+            Double oldLineTotal = foundCartLine.getLineTotal();
+            Double newLineTotal = foundCartLine.getPrice() * newQuantity;
 
             foundCartLine.setQuantity(newQuantity);
             foundCartLine.setLineTotal(newLineTotal);

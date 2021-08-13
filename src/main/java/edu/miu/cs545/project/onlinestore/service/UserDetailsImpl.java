@@ -17,7 +17,8 @@ public class UserDetailsImpl implements UserDetails {
 
     private User user;
 
-    public UserDetailsImpl() {}
+    public UserDetailsImpl() {
+    }
 
     public UserDetailsImpl(User user) {
         this.user = user;

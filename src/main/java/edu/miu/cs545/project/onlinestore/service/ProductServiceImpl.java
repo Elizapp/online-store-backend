@@ -13,13 +13,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl implements ProductService{
-    @Autowired
-    private ProductRepository productRepository;
-
+public class ProductServiceImpl implements IProductService {
     @Autowired
     SellerRepository sellerRepository;
-
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public List<Product> getAll() {
@@ -32,16 +30,16 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Boolean createProduct(Product product, Long userId) {
+    public Boolean createProduct(Product product) {
         try {
-            Seller seller = sellerRepository.getSellerByUserId(userId);
-            if(seller != null){
+            Seller seller = sellerRepository.getSellerByUserId(product.getId());
+            if (seller != null) {
                 product.setSeller(seller);
                 productRepository.save(product);
                 return true;
             }
             return false;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -54,20 +52,20 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<Review> getApprovedReviewsByProductId(Long productId) {
         List<Review> reviews = productRepository.findReviewsByProductId(productId);
-        return reviews.stream().filter(r->r.isApproved()).collect(Collectors.toList());
+        return reviews.stream().filter(r -> r.isApproved()).collect(Collectors.toList());
     }
 
     @Override
     public Boolean updateProduct(Product product, Long userId) {
         try {
             Seller seller = sellerRepository.getSellerByUserId(userId);
-            if(seller != null){
+            if (seller != null) {
                 product.setSeller(seller);
                 productRepository.save(product);
                 return true;
             }
             return false;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
     }

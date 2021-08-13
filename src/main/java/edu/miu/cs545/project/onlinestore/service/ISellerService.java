@@ -4,8 +4,12 @@ import edu.miu.cs545.project.onlinestore.domain.Product;
 import edu.miu.cs545.project.onlinestore.domain.Seller;
 
 import java.util.List;
-public interface SellerService {
+import java.util.Optional;
+
+public interface ISellerService {
     List<Seller> getAll();
-    Seller getSellerByID(Long id);
+
+    Optional<Seller> getSellerByID(Long id);
+
     List<Product> getProductsBySellerId(Long id);
 }

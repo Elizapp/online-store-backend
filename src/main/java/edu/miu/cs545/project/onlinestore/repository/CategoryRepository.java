@@ -5,11 +5,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface CategoryRepository extends CrudRepository<Category,Long> {
+public interface CategoryRepository extends CrudRepository<Category, Long> {
     List<Category> findAll();
-    Category findCategoryByName(String name);
-    Category findCategoryById(Long id);
+
+    Optional<Category> findCategoryByName(String name);
+
+    Optional<Category> findCategoryById(Long id);
+
     Category save(Category category);
 }

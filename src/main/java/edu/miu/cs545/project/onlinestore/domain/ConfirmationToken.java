@@ -33,12 +33,12 @@ public class ConfirmationToken {
         this.confirmationToken = UUID.randomUUID().toString();
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Id
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -8,15 +8,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface SellerRepository extends CrudRepository<Seller,Long> {
-    public List<Seller> findAll();
+public interface SellerRepository extends CrudRepository<Seller, Long> {
+    List<Seller> findAll();
 
-    public Seller getSellerById(Long id);
+    Optional<Seller> getSellerById(Long id);
 
     @Query(value = "SELECT s.products FROM Seller s WHERE s.id = :id")
     List<Product> getProductsBySellerId(@Param("id") Long id);
 
-    public Seller getSellerByUserId(@Param("userId") Long id);
+    Seller getSellerByUserId(@Param("userId") Long id);
 }

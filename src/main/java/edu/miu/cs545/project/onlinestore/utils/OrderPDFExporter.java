@@ -1,22 +1,23 @@
 package edu.miu.cs545.project.onlinestore.utils;
 
-import edu.miu.cs545.project.onlinestore.dto.OrderDTO;
 
-import java.awt.Color;
+import com.lowagie.text.Font;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import edu.miu.cs545.project.onlinestore.domain.Order;
+
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import com.lowagie.text.Font;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
-
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public class OrderPDFExporter{
-    private List<OrderDTO> listOrder;
+public class OrderPDFExporter {
+    private final List<Order> listOrder;
 
-    public OrderPDFExporter(List<OrderDTO> listOrder) {
+    public OrderPDFExporter(List<Order> listOrder) {
         this.listOrder = listOrder;
     }
 
@@ -44,9 +45,9 @@ public class OrderPDFExporter{
     }
 
     private void writeTableData(PdfPTable table) {
-        for (OrderDTO order : listOrder) {
+        for (Order order : listOrder) {
             table.addCell(String.valueOf(order.getId()));
-            table.addCell(String.valueOf(order.getOrderDate() ));
+            table.addCell(String.valueOf(order.getOrderDate()));
             table.addCell(String.valueOf(order.getTotalMoney()));
             table.addCell(order.getCurrentStatus());
         }
@@ -69,7 +70,7 @@ public class OrderPDFExporter{
 
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100f);
-        table.setWidths(new float[] {1.5f, 3.5f, 3.0f, 3.0f});
+        table.setWidths(new float[]{1.5f, 3.5f, 3.0f, 3.0f});
         table.setSpacingBefore(10);
 
         writeTableHeader(table);

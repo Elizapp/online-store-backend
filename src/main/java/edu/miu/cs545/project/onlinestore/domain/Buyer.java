@@ -15,17 +15,14 @@ import java.io.Serializable;
 @Table(name = "buyers")
 public class Buyer implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    User user;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
-
     @NotNull
     private int accumulatedPoints;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    User user;
 
 }

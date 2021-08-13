@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ReviewServiceImpl implements ReviewService{
+public class ReviewServiceImpl implements IReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
 
@@ -31,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public Boolean approveReview(Long reviewId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
-        if(review.isPresent()){
+        if (review.isPresent()) {
             review.get().setApproved(true);
             reviewRepository.save(review.get());
             return true;

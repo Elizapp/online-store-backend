@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AdminRepository extends CrudRepository<Admin,Long> {
-    public List<Admin> findAll();
-    public Admin findAdminById(Long id);
+public interface AdminRepository extends CrudRepository<Admin, Long> {
+    List<Admin> findAll();
+
+    Admin findAdminById(Long id);
 }

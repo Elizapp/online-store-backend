@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SellerDTO {
+    UserDTO user;
     private long id;
     private boolean approved;
     private String companyName;
-    UserDTO user;
 }
 

@@ -1,97 +1,72 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
-
 import edu.miu.cs545.project.onlinestore.domain.Product;
 import edu.miu.cs545.project.onlinestore.domain.Review;
-import edu.miu.cs545.project.onlinestore.dto.ProductDTO;
-import edu.miu.cs545.project.onlinestore.dto.ReviewDTO;
-import edu.miu.cs545.project.onlinestore.service.ProductService;
-import edu.miu.cs545.project.onlinestore.service.UserDetailsImpl;
-import org.modelmapper.ModelMapper;
+import edu.miu.cs545.project.onlinestore.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/products")
 public class ProductController {
     @Autowired
-    private ProductService productService;
+    private IProductService productService;
 
 
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    @GetMapping("")
+    @GetMapping("/")
     public @ResponseBody
-    List<ProductDTO> getAllProducts(){
-        List<Product> products = productService.getAll();
-        return products.stream()
-                .map(p -> modelMapper.map(p,ProductDTO.class))
-                .collect(Collectors.toList());
+    ResponseEntity<?> getAllProducts() {
+        return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{productId}")
-    public @ResponseBody ProductDTO getProductById(@PathVariable Long productId){
+    public @ResponseBody
+    ResponseEntity<?> getProductById(@PathVariable Long productId) {
         Optional<Product> productOptional = productService.getProductById(productId);
-        if(productOptional.isPresent()){
-            return modelMapper.map(productOptional.get(), ProductDTO.class);
+        if (productOptional.isPresent()) {
+            return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping("/new")
-    @PreAuthorize("hasAutority('SELLER')")
-    public Boolean createProduct(@RequestBody ProductDTO productDTO){
-        System.out.println(productDTO);
-        Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        System.out.println(userdetails);
-        return productService.createProduct(product, userdetails.getUser().getId());
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
     }
 
-    @PutMapping("")
-    public void updateProduct(@RequestBody ProductDTO productDTO){
-        Product product = modelMapper.map(productDTO, Product.class);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userdetails = (UserDetailsImpl) auth.getPrincipal();
-        productService.updateProduct(product, userdetails.getUser().getId());
+    @PutMapping("/{productId}")
+    public ResponseEntity<?> updateProduct(@PathVariable long productId, @RequestBody Product product) {
+        Optional<Product> verifyProduct = productService.getProductById(productId);
+
+        if (verifyProduct.isPresent()) {
+            productService.updateProduct(product, productId);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
 
 
     @DeleteMapping(value = "/{productId}")
-    public Boolean deleteProduct(@PathVariable Long productId) throws Exception {
-        Optional<Product> product =  productService.getProductById(productId);
-        try{
-            if(product.isPresent()){
-                productService.deleteProduct(productId);
-                return true;
-            } else{
-                throw new EntityNotFoundException("Product does not exist!");
-            }
-        }catch(Exception e){
-            throw new Exception(e.getMessage());
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) throws Exception {
+        Optional<Product> verifyProduct = productService.getProductById(productId);
+        if (verifyProduct.isPresent()) {
+            productService.deleteProduct(productId);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         }
+        return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
     }
+
     //Get approved reviews by product id
     @GetMapping("{productId}/reviews")
-    public @ResponseBody
-    List<ReviewDTO> getApprovedReviewsByProductId(@PathVariable Long productId){
+    public ResponseEntity<?> getApprovedReviewsByProductId(@PathVariable Long productId) {
         List<Review> reviews = productService.getApprovedReviewsByProductId(productId);
-        return reviews.stream()
-                .map(r->modelMapper.map(r,ReviewDTO.class))
-                .collect(Collectors.toList());
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
 }

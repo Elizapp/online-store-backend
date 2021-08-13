@@ -16,27 +16,21 @@ import java.io.Serializable;
 @Table(name = "orderlines")
 public class OrderLine implements Serializable {
     private static final long serialVersionUID = 7359591984285268537L;
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    Order order;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    Product product;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private long id;
-
     @NotNull
     private int quantity;
-
     @Digits(integer = 10, fraction = 2)
     private Double price;
-
     @Digits(integer = 10, fraction = 2)
     private Double lineTotal;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="order_id")
-    Order order;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="product_id")
-    Product product;
 
 }

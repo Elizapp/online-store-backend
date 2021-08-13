@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderLineRepository extends CrudRepository<OrderLine,Long> {
+public interface OrderLineRepository extends CrudRepository<OrderLine, Long> {
     @Query("SELECT ol.order FROM OrderLine ol WHERE ol.id = :orderId")
-    public List<OrderLine> getOrderLineById(@Param("orderId") Long orderId);
+    List<OrderLine> getOrderLineById(@Param("orderId") Long orderId);
 
-    public List<OrderLine> findAll();
+    List<OrderLine> findAll();
 
 }

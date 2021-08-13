@@ -1,5 +1,5 @@
 package edu.miu.cs545.project.onlinestore.service;
 
-public interface AdminService {
+public interface IAdminService {
     Boolean approveSeller(long id);
 }

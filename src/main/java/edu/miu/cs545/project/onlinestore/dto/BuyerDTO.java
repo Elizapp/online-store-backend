@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BuyerDTO {
+    UserDTO user;
     private long id;
     private int accumulatedPoints;
-    UserDTO user;
 }
 
