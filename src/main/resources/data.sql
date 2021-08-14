@@ -32,11 +32,9 @@ SELECT (SELECT ID FROM USERS WHERE USERNAME='BUYER' LIMIT 1) , (SELECT ID FROM R
 INSERT INTO USERS_ROLES(user_id,role_id)
 SELECT (SELECT ID FROM USERS WHERE USERNAME='SELLER' LIMIT 1) , (SELECT ID FROM ROLES WHERE NAME='SELLER' LIMIT 1);
 
-#Admins insertion
- insert into admins (level,user_id) values(1,1);
-#Sellers insertion
- insert into sellers (approved,user_id) values(1,2);
-#Buyers insertion
+#Admins insertion #Sellers insertion #Buyers insertion
+insert into admins (level,user_id) values(1,1);
+insert into sellers (approved,user_id) values(1,2);
 insert into buyers (user_id,accumulated_points)  values(3,0);
 
 

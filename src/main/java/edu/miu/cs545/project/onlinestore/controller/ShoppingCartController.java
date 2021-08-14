@@ -1,5 +1,7 @@
 package edu.miu.cs545.project.onlinestore.controller;
 
+import edu.miu.cs545.project.onlinestore.domain.Payment;
+import edu.miu.cs545.project.onlinestore.domain.Shipping;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
 import edu.miu.cs545.project.onlinestore.dto.ShoppingCartDTO;
@@ -76,9 +78,9 @@ public class ShoppingCartController {
         //simulation
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userdetails = (UserDetailsImpl) authentication.getPrincipal();
-       // Shipping shipping = new Shipping(userdetails.getUser().getFirstName(),userdetails.getUser().getLastName(),userdetails.getUser().getPhoneNumber(),java.time.LocalDate.now(),"1000 N 4th Street","Fairfield","IOWA","USA","52557");
-      // Payment payment = new Payment(java.time.LocalDate.now(),new Double(10.0),"John","Credit");
-      // orderController.createOrderFromCart(cartId, shipping, payment);
+        Shipping shipping = new Shipping(userdetails.getUser().getFirstName(),userdetails.getUser().getLastName(),userdetails.getUser().getPhoneNumber(),java.time.LocalDate.now(),"1000 N 4th Street","Fairfield","IOWA","USA","52557");
+        Payment payment = new Payment(java.time.LocalDate.now(),new Double(10.0),"John","Credit");
+        orderController.createOrderFromCart(cartId, shipping, payment);
         ///////////////////////
     }
 }
