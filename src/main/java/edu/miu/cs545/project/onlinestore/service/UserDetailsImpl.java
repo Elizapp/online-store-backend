@@ -1,32 +1,25 @@
 package edu.miu.cs545.project.onlinestore.service;
-
-import edu.miu.cs545.project.onlinestore.domain.Role;
-import edu.miu.cs545.project.onlinestore.domain.User;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
+import edu.miu.cs545.project.onlinestore.domain.User;
+import edu.miu.cs545.project.onlinestore.domain.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserDetailsImpl implements UserDetails {
 
     private User user;
 
-    public User getUser() {
-        return user;
-    }
-
     public UserDetailsImpl(User user) {
         this.user = user;
     }
 
     public UserDetailsImpl() {}
-
 
     @Override
     public String getUsername() {
@@ -43,14 +36,13 @@ public class UserDetailsImpl implements UserDetails {
         return authorities;
     }
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
+    public User getUser() {
+        return user;
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public String getPassword() {
+        return user.getPassword();
     }
 
     @Override
@@ -59,12 +51,17 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() {
+    public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
     public boolean isEnabled() {
         return user.isEnabled();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 }

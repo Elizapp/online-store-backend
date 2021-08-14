@@ -1,15 +1,12 @@
 package edu.miu.cs545.project.onlinestore.service;
-
+import java.util.List;
 import edu.miu.cs545.project.onlinestore.domain.Category;
-import org.springframework.beans.factory.annotation.Autowired;
 import edu.miu.cs545.project.onlinestore.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
-
     @Autowired
     CategoryRepository categoryRepository;
 
@@ -24,12 +21,12 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public void createCategory(Category category) {
-        categoryRepository.save(category);
+    public Category getCategoryByName(String name) {
+        return categoryRepository.findCategoryByName(name);
     }
 
     @Override
-    public Category getCategoryByName(String name) {
-        return categoryRepository.findCategoryByName(name);
+    public void createCategory(Category category) {
+        categoryRepository.save(category);
     }
 }
