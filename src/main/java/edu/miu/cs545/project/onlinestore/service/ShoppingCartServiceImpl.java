@@ -1,29 +1,14 @@
 package edu.miu.cs545.project.onlinestore.service;
-
+import java.util.Optional;
+import java.util.List;
 import edu.miu.cs545.project.onlinestore.repository.ShoppingCartRepository;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
 import edu.miu.cs545.project.onlinestore.repository.ShoppingCartLineRepository;
 import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Optional;
-import java.util.List;
-
-import edu.miu.cs545.project.onlinestore.domain.ShoppingCart;
-import edu.miu.cs545.project.onlinestore.domain.ShoppingCartLine;
-import edu.miu.cs545.project.onlinestore.repository.ShoppingCartLineRepository;
-import edu.miu.cs545.project.onlinestore.repository.ShoppingCartRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService{
-
-
     @Autowired
     private ShoppingCartLineRepository shoppingCartLineRepository;
     @Autowired
@@ -32,7 +17,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
     public ShoppingCart createShoppingCart(ShoppingCart cart) {
         return shoppingCartRepository.save(cart);
     }
-
 
     @Override
     public void removeLineFromShoppingCart(Long cartId, Long cartLineId) {
@@ -68,10 +52,23 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
     }
 
     @Override
+    public void updateLineInShoppingCart(Long cartId, ShoppingCartLine newCartLine) {
+        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
+        Optional<ShoppingCartLine> cartLine =  shoppingCartLineRepository.findById(newCartLine.getId());
+        if(cartLine.isPresent() && cart.isPresent()){
+            ShoppingCart foundCart = cart.get();
+            ShoppingCartLine foundCartLine = cartLine.get();
+            foundCart.setTotalMoney(foundCart.getTotalMoney()  + newCartLine.getLineTotal() - foundCartLine.getLineTotal());
+            newCartLine.setCart(foundCart);
+            shoppingCartLineRepository.save(newCartLine);
+            shoppingCartRepository.save(foundCart);
+        }
+    }
+
+    @Override
     public Optional<ShoppingCart> getShoppingCart(Long id) {
         return shoppingCartRepository.findById(id);
     }
-
 
     @Override
     public void updateQuantityInShoppingCartLine(Long cartId, Long lineId, Integer newQuantity) {
@@ -91,23 +88,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
     }
 
     @Override
-    public void updateLineInShoppingCart(Long cartId, ShoppingCartLine newCartLine) {
-        Optional<ShoppingCart> cart =  shoppingCartRepository.findById(cartId);
-        Optional<ShoppingCartLine> cartLine =  shoppingCartLineRepository.findById(newCartLine.getId());
-        if(cart.isPresent() && cartLine.isPresent()){
-            ShoppingCart foundCart = cart.get();
-            ShoppingCartLine foundCartLine = cartLine.get();
-            foundCart.setTotalMoney(foundCart.getTotalMoney() - foundCartLine.getLineTotal() + newCartLine.getLineTotal());
-            newCartLine.setCart(foundCart);
-            shoppingCartLineRepository.save(newCartLine);
-            shoppingCartRepository.save(foundCart);
-        }
-    }
-
-    @Override
     public Optional<ShoppingCart> getShoppingCartByBuyerNotCompleted(Long id) {
         return shoppingCartRepository.getShoppingCartByBuyerNotCompleted(id);
     }
-
 }
 

@@ -3,13 +3,13 @@ package edu.miu.cs545.project.onlinestore.service;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.List;
-import edu.miu.cs545.project.onlinestore.dto.NewUserDTO;
 import edu.miu.cs545.project.onlinestore.domain.*;
-import edu.miu.cs545.project.onlinestore.repository.*;
+import edu.miu.cs545.project.onlinestore.dto.NewUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import edu.miu.cs545.project.onlinestore.repository.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +18,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     SellerRepository sellerRepository;
     @Autowired
-    BuyerRepository buyerRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
+    BuyerRepository buyerRepository;
+    @Autowired
     AdminRepository adminRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public User updateProfile(NewUserDTO updateUser){
         User user = userRepository.getUserByUsername(updateUser.getUsername());
-        if (user!= null) {
+        if (null!=user) {
             if(!updateUser.getPassword().isEmpty()){
                 BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
                 final String encryptedPassword = bCryptPasswordEncoder.encode(updateUser.getPassword());
@@ -43,21 +43,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return null;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        User user = userRepository.getUserByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Could not find user with the given name");
-        }
-        return new UserDetailsImpl(user);
-    }
-
     public String signUpUser(NewUserDTO newUser) {
         try {
-            User u = userRepository.getUserByUsername(newUser.getUsername());
-            if (u!= null) {
-                return "User name already existing.";
+            User us = userRepository.getUserByUsername(newUser.getUsername());
+            if (null!= us) {
+                return "User name already existing";
             }
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             final String encryptedPassword = bCryptPasswordEncoder.encode(newUser.getPassword());
@@ -69,7 +59,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             user.setLastName(newUser.getLastName());
             user.setPhoneNumber(newUser.getPhoneNumber());
             List<Role> roles = roleRepository.findRolesByIdIn(newUser.getRoles().
-                    stream().map(r->r.getId()).collect(Collectors.toList()));
+                    stream().map(rol->rol.getId()).collect(Collectors.toList()));
             user.setRoles(new HashSet<>(roles));
             final User createdUser = userRepository.save(user);
             for(Role role:roles){
@@ -96,11 +86,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                         break;
                 }
             }
-
             return "User Registered successfully.";
         }catch (Exception ex){
             return ex.getMessage();
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+        User user = userRepository.getUserByUsername(username);
+        if (null==user) {
+            throw new UsernameNotFoundException("Could not find user with the given name");
+        }
+        return new UserDetailsImpl(user);
+    }
 }

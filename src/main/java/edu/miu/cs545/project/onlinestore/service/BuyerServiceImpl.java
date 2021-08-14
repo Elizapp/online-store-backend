@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public class BuyerServiceImpl implements BuyerService{
-
     @Autowired
     BuyerRepository buyerRepository;
 
